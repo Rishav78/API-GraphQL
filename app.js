@@ -8,7 +8,47 @@ const { buildSchema  } = require('graphql');
 const PORT = process.env.PORT;
 const app = express();
 
+const messages = []
+
+
+//receivedby: [MessageReceivedBy!]!
+
+const messangerSchema = buildSchema(`
+    type MessageReceivedBy {
+        _id: ID!
+        seen: Boolean!
+        user: ID!
+    }
+
+    type Message {
+        _id: ID!
+        sender: ID!
+        message: String!
+        createdAt: String!
+        updatedAt: String!
+    }
+
+    input InputMessage {
+        sender: ID!
+        message: String!
+    }
+
+    type RootQuery {
+        messages: [Message!]!
+    }
+
+    type RootMutation {
+        createMessage(inputMessage: InputMessage): Message
+    }
+
+    schema {
+        query: RootQuery
+        mutation: RootMutation
+    }
+`);
+
 const schema = buildSchema(`
+
     type RootQuery {
         events: [String!]!
     }
@@ -24,10 +64,20 @@ const schema = buildSchema(`
 `)
 
 app.use('/graphql', graphqlHttp({
-    schema,
+    schema: messangerSchema,
     rootValue: {
-        events: () => ['1', '2'],
-        createEvent: (args) => args.name
+        messages: () => messages,
+        createMessage: (args) => {
+            const { inputMessage } = args;
+            const message = {
+                ...inputMessage,
+                _id: Math.random().toString(),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            }
+            messages.push(message);
+            return message;
+        }
     },
     graphiql: true
 }));
