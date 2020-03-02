@@ -30,6 +30,11 @@ module.exports = buildSchema(`
         createdAt: String!
     }
 
+    type AuthData {
+        _id: ID!
+        token: String!
+    }
+
     input inputUser {
         firstname: String!
         lastname: String!
@@ -53,6 +58,7 @@ module.exports = buildSchema(`
         message(_id: ID): Message
         users: [User!]!
         userById(_id: ID): User
+        Login(phone: String!, password: String!): AuthData!
     }
 
     type RootMutation {

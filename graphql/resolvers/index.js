@@ -1,4 +1,5 @@
 
+const bcrypt = require('bcryptjs');
 
 //Models
 const message = require('../../models/messages');
