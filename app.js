@@ -8,10 +8,13 @@ const { buildSchema  } = require('graphql');
 const PORT = process.env.PORT;
 const app = express();
 
-const messages = []
+// MongoDB Config
+require('./models/db');
 
+//Models
+const message = require('./models/messages');
+const user = require('./models/users');
 
-//receivedby: [MessageReceivedBy!]!
 
 const messangerSchema = buildSchema(`
     type MessageReceivedBy {
@@ -24,21 +27,36 @@ const messangerSchema = buildSchema(`
         _id: ID!
         sender: ID!
         message: String!
+        receivedby: [MessageReceivedBy!]!
         createdAt: String!
         updatedAt: String!
     }
 
-    input InputMessage {
+    type User {
+        _id: ID!
+        firstname: String!
+        lastname: String!
+    }
+
+    input messageReceivedBy {
+        seen: Boolean!
+        user: ID!
+    }
+
+    input inputMessage {
         sender: ID!
         message: String!
+        receivedby: [messageReceivedBy]!
     }
 
     type RootQuery {
         messages: [Message!]!
+        message(_id: ID): Message
+        users: [User!]!
     }
 
     type RootMutation {
-        createMessage(inputMessage: InputMessage): Message
+        createMessage(InputMessage: inputMessage): Message
     }
 
     schema {
@@ -47,36 +65,27 @@ const messangerSchema = buildSchema(`
     }
 `);
 
-const schema = buildSchema(`
-
-    type RootQuery {
-        events: [String!]!
-    }
-
-    type RootMutation {
-        createEvent(name: String): String
-    }
-
-    schema {
-        query: RootQuery
-        mutation: RootMutation
-    }
-`)
-
 app.use('/graphql', graphqlHttp({
     schema: messangerSchema,
     rootValue: {
-        messages: () => messages,
-        createMessage: (args) => {
-            const { inputMessage } = args;
-            const message = {
-                ...inputMessage,
-                _id: Math.random().toString(),
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-            }
-            messages.push(message);
-            return message;
+        messages: async _ => {
+            const messages = await message.find({});
+            return messages;
+        },
+        users: async _ => {
+            const users = await user.find({});
+            return users;
+        }, 
+        message: async args => {
+            const { _id } = args;
+            console.log(_id)
+            const msg = await message.findById(_id);
+            return msg;
+        },
+        createMessage: async (args) => {
+            const { InputMessage } = args;
+            const msg = new message({...InputMessage});
+            return (await msg.save());
         }
     },
     graphiql: true

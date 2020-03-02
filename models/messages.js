@@ -1,9 +1,10 @@
-const mongoose = require('./db');
+const mongoose = require('mongoose');
 
 let messageSchema = new mongoose.Schema({
     sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
+        required: true
     },
     receivedby: [{
         user: {
@@ -17,6 +18,7 @@ let messageSchema = new mongoose.Schema({
     }],
     message: {
         type: String,
+        required: true
     },
 },{
     timestamps: true
