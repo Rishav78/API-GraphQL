@@ -20,7 +20,7 @@ module.exports = buildSchema(`
     type Chat {
         _id: ID!
         chattype: Boolean!
-        chatname: String!
+        chatname: String
         chatmembers: [User!]!
         messages: [Message!]!
         imageid: String!

@@ -10,12 +10,17 @@ module.exports = {
             return usrs.map( usr => ({ ...usr._doc, friends: users.bind(this, usr.friends )}));
         }
         catch (err) {
-            console.log(err);
+            throw err;
         }
     },
     userById: async ( args, req ) => {
         const { _id } = args;
-        const usr = await user.findById(_id,  { password: 0 });
-        return {...usr._doc, friends: users.bind(this, usr.friends)};
+        try {
+            const usr = await user.findById(_id,  { password: 0 });
+            return {...usr._doc, friends: users.bind(this, usr.friends)};
+        }
+        catch (err) {
+            throw err;
+        }
     },
 }
