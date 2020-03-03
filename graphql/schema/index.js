@@ -33,6 +33,7 @@ module.exports = buildSchema(`
     type AuthData {
         _id: ID!
         token: String!
+        expiresIn: Int!
     }
 
     input inputUser {
