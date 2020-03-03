@@ -17,6 +17,17 @@ module.exports = buildSchema(`
         updatedAt: String!
     }
 
+    type Chat {
+        _id: ID!
+        chattype: Boolean!
+        chatname: String!
+        chatmembers: [User!]!
+        messages: [Message!]!
+        imageid: String!
+        createdAt: String!
+        updatedAt: String!
+    }
+
     type User {
         _id: ID!
         firstname: String!
@@ -53,18 +64,27 @@ module.exports = buildSchema(`
         message: String!
         receivedby: [messageReceivedBy]!
     }
+    input inputChat {
+        chattype: Boolean!
+        chatname: String
+        chatmembers: [ID!]!
+        imageid: String = "Default.png"
+    }
 
     type RootQuery {
-        messages: [Message!]!
-        message(_id: ID): Message
+        login(phone: String!, password: String!): AuthData!
         users: [User!]!
         userById(_id: ID): User
-        Login(phone: String!, password: String!): AuthData!
+        chats: [Chat!]!
+        chatById(_id: ID!): Chat
+        messages: [Message!]!
+        messageById(_id: ID): Message
     }
 
     type RootMutation {
         createMessage(InputMessage: inputMessage): Message
         createUser(InputUser: inputUser): User
+        createChat(InputChat: inputChat): Chat
     }
 
     schema {

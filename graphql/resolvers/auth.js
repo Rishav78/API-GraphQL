@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const user = require('../../models/users');
 
 module.exports = {
-    Login: async ( args ) => {
+    login: async ( args ) => {
         const { phone, password } = args;
         const usr = await user.findOne({ phone });
         try{

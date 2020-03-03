@@ -4,17 +4,14 @@ module.exports = {
     messages: async ( args, req ) => {
         const { isAuth } = req;
         try {
-            if ( !isAuth ) {
-                throw Error('unauthorized');
-            }
-            const messages = await message.find({});
+            const messages = await message.find();
             return messages;
         } 
         catch (err) {
             throw err;
         }
     },
-    message: async ( args, req ) => {
+    messageById: async ( args, req ) => {
         const { _id } = args;
         try {
             const msg = await message.findById(_id);
