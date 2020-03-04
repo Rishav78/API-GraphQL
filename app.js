@@ -12,6 +12,7 @@ const app = express();
 // MongoDB Config
 require('./models/db');
 
+// Middlewears
 app.use(express.json());
 app.use(auth());
 app.use(morgan('tiny'));
