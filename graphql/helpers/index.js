@@ -1,4 +1,4 @@
-const user = require('../../models/users');
+const user = require('../../models/usersinfo');
 
 const users = async ids => {
     const usrs = await user.find({_id: { $in: ids }}, { password: 0 });

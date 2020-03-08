@@ -10,7 +10,7 @@ const auth = require('./middlewares/is-auth');
 const app = express();
 
 // MongoDB Config
-require('./models/db');
+require('./config/db');
 
 // Middlewears
 app.use(express.json());

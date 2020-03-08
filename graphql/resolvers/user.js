@@ -1,5 +1,5 @@
 const message = require('../../models/messages');
-const user = require('../../models/users');
+const user = require('../../models/usersinfo');
 const { users } = require('../helpers');
 
 module.exports = {

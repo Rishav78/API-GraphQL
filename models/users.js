@@ -1,34 +1,18 @@
 const mongoose = require('mongoose');
 
-let userSchema = new mongoose.Schema({
-    firstname: {
-        type: String
+const userSchema = new mongoose.Schema({
+    'email': {
+        'type': String,
+        'required': true,
+        'match': [
+            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+            'please provide a valid email'
+        ],
     },
-    lastname: {
-        type: String
-    },
-    imageid: {
-        type: String
-    },
-    phone: {
+    'password': {
         type: String,
-    },
-    password: {
-        type: String
-    },
-    friends: [{    
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
-    }],
-    activeChats:  [{
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'chats',
-    }],
-    status: {
-        type: Boolean,
+        required: true
     }
-},{
-    timestamps: true
 });
 
 module.exports = mongoose.model('users', userSchema);
