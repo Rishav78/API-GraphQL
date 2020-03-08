@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
     'email': {
@@ -10,14 +11,25 @@ const userSchema = new mongoose.Schema({
         ],
     },
     'password': {
-        type: String,
-        required: true
+        'type': String,
+        'required': true
+    },
+    'verified': {
+        'type': Boolean,
+        'required': true,
+        'default': false
+    },
+    'active': {
+        'type': Boolean,
+        'required': true,
+        'default': true,
     }
 });
 
 userSchema.pre('save', async function(next) {
     const { email } = this;
     const exists = await this.model('users').findOne({ email });
+    console.log(exists);
     if ( exists ) {
         throw Error('user already exists');
     }

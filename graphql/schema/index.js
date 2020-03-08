@@ -32,7 +32,7 @@ module.exports = buildSchema(`
         _id: ID!
         firstname: String!
         lastname: String!
-        phone: String!
+        email: String!
         password: String
         friends: [User!]!
         activeChats: [ID!]!
@@ -50,7 +50,7 @@ module.exports = buildSchema(`
     input inputUser {
         firstname: String!
         lastname: String!
-        phone: String!
+        email: String!
         password: String!
     }
 

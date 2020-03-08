@@ -40,4 +40,19 @@ let userSchema = new mongoose.Schema({
     'timestamps': true
 });
 
+async function verification(next) {
+    const { email } = this;
+    const user = this.model('users').findOne({ email });
+    if (!user.active) {
+        throw new Error('user doest not exist');
+    }
+    if(!user.verified) {
+        throw new Error('verify your account before accessing it')
+    }
+    next();
+}
+
+userSchema.pre('findOne', verification);
+userSchema.pre('findOneAndUpdate', verification);
+
 module.exports = mongoose.model('userinfos', userSchema);

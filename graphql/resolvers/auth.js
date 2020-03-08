@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const users = require('../../models/users');
+const userinfo = require('../../models/usersinfo');
 
 module.exports = {
     login: async ( args ) => {
@@ -18,9 +19,11 @@ module.exports = {
         }
     },
     createUser: async ( args, req ) => {
+        const { email, password, ...restInfo } = args.InputUser;
         try {
-            const newUser = new user(args.InputUser);
-            return await newUser.save();
+            await (new users({ email, password })).save();
+            const newUserInfo = new userinfo({ email, ...restInfo });
+            return await newUserInfo.save();
         }
         catch (err) {
             throw err;
