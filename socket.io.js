@@ -1,6 +1,6 @@
 const socketIO = require('socket.io');
 const controllers = require('./controllers');
-const auth = require('./auth/validToken');
+const auth = require('./auth/is-auth');
 
 module.exports = server => {
     const io = socketIO(server);
@@ -14,7 +14,7 @@ module.exports = server => {
             const { Token } = data;
             const { authenticated, user} = auth.validToken(Token);
             if(!authenticated) return cb({ authenticated });
-            const { _id } = user.user;
+            const { _id } = user;
 
             connected[_id] = socket.id;
             connected2[socket.id] = _id;
@@ -31,12 +31,6 @@ module.exports = server => {
             cb({status: status});
         })
 
-        socket.on('add-new-friend', controllers.friends.addnewfriend);
-
-        socket.on('create-private-chat-room', controllers.chats.createPrivateChatroom);
-
-        socket.on('create-group', controllers.chats.createGroupChat);
-
         socket.on('typing', (data) => {
             const { chat, status, user:sender } = data;
             const { receiver, _id } = chat;
@@ -47,7 +41,7 @@ module.exports = server => {
         });
 
         socket.on('message-delivered', async data => {
-            const { success, msg } = await controllers.messages.updateMessage(data);
+            const { success, msg } = await controllers.message.update(data);
             if(!success) return;
             
             const { sender } = msg;
@@ -57,18 +51,18 @@ module.exports = server => {
         })
 
         socket.on('send-message', async (data, cb) => {
-            const message = await controllers.messages.saveMessage(data, cb);
+            const {authenticated, ...message} = await controllers.messages.save(data);
             data.receiver.forEach( e => {
                 const socketid = connected[e._id];
                 if(socketid) io.to(socketid).emit('new-message', {...message})
             });
+            cb({authenticated, ...message});
         });
 
         socket.on('disconnect', () => {
             const _id = connected2[socket.id];
             delete connected2[socket.id];
             delete connected[_id];
-            console.log(connected)
             socket.broadcast.emit('user-status', { _id, status: false });
             console.log('user disconnected')
         });
