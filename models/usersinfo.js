@@ -24,17 +24,20 @@ let userSchema = new mongoose.Schema({
     'friends': [{    
         'type': mongoose.Schema.Types.ObjectId,
         'ref': 'users',
+        'default': []
     }],
     'activeChats':  [{
         'type': mongoose.Schema.Types.ObjectId, 
         'ref': 'chats',
+        'default': []
     }],
     'status': {
         'type': Boolean,
-        'required': true
+        'required': true,
+        'default': false,
     }
 },{
     'timestamps': true
 });
 
-module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('userinfos', userSchema);

@@ -15,4 +15,35 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+userSchema.pre('save', async function(next) {
+    const { email } = this;
+    const exists = await this.model('users').findOne({ email });
+    if ( exists ) {
+        throw Error('user already exists');
+    }
+    next();
+});
+
+userSchema.pre('save', async function(next) {
+    const { password } = this;
+    const passwordRegx = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9!@#$_-]{8,}/;
+    if (!passwordRegx.test(password)) {
+        throw new Error('password must be of min 8 length and should contain special character(!@#$_)')
+    }
+    this.password = await bcrypt.hash(password, 12);
+    next();
+});
+
+userSchema.methods.getLoginToken = async function(email, password) {
+    const { _id, password: pswd } = this;
+    const isEqual = await bcrypt.compare(password, pswd);
+    if ( !isEqual ) {
+        throw Error('invalid password');
+    }
+    const token = jwt.sign({ email, _id }, process.env.JSON_WEB_TOKEN_KEY, {
+        expiresIn: '1h'
+    });
+    return { token, expiresIn: 1 };
+}
+
 module.exports = mongoose.model('users', userSchema);
