@@ -4,6 +4,9 @@ module.exports = {
     messages: async ( args, req ) => {
         const { isAuth } = req;
         try {
+            // if (!isAuth) {
+            //     throw new Error('unauthrized');
+            // }
             const messages = await message.find();
             return messages;
         } 

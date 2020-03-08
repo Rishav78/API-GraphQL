@@ -44,6 +44,7 @@ let userSchema = new mongoose.Schema({
 
 async function verification(next) {
     const { email } = this;
+    console.log(this);
     const user = this.model('users').findOne({ email });
     if (!user.active) {
         throw new Error('user doest not exist');
@@ -54,8 +55,8 @@ async function verification(next) {
     next();
 }
 
-userSchema.pre('findOne', verification);
-userSchema.pre('findOneAndUpdate', verification);
+// userSchema.pre('findOne', verification);
+// userSchema.pre('findOneAndUpdate', verification);
 
 userSchema.pre('save', function(next) {
     this.firstname = slugify(this.firstname, { lower: true });

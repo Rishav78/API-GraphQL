@@ -47,7 +47,7 @@ module.exports = buildSchema(`
     }
 
     type Error {
-        success: Boolean!
+        success: Boolean
         msg: String
     }
 

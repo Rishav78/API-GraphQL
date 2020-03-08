@@ -47,11 +47,12 @@ userSchema.pre('save', async function(next) {
 });
 
 userSchema.methods.getLoginToken = async function(email, password) {
-    const { _id, password: pswd } = this;
+    const { password: pswd } = this;
     const isEqual = await bcrypt.compare(password, pswd);
     if ( !isEqual ) {
         throw Error('invalid password');
     }
+    const { _id } = await this.model('userinfos').findOne({ email });
     const token = jwt.sign({ email, _id }, process.env.JSON_WEB_TOKEN_KEY, {
         expiresIn: '1h'
     });
