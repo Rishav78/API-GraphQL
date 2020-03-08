@@ -1,18 +1,16 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const users = require('../../models/users');
 const userinfo = require('../../models/usersinfo');
 
 module.exports = {
     login: async ( args ) => {
+        console.log(args)
         const { email, password } = args;
         try{
             const user = await users.findOne({ email });
             if ( !user ) {
                 throw Error('user doest not exists');
             }
-            const token = await user.getLoginToken();
-            return { _id, ...token };
+            return await user.getLoginToken(email, password);
         }
         catch (err) {
             throw err;

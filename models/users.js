@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
     'email': {
@@ -29,7 +30,6 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', async function(next) {
     const { email } = this;
     const exists = await this.model('users').findOne({ email });
-    console.log(exists);
     if ( exists ) {
         throw Error('user already exists');
     }

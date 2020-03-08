@@ -19,7 +19,7 @@ module.exports = buildSchema(`
 
     type Chat {
         _id: ID!
-        chattype: Boolean!
+        chattype: String!
         chatname: String
         chatmembers: [User!]!
         messages: [Message!]!
@@ -42,7 +42,6 @@ module.exports = buildSchema(`
     }
 
     type AuthData {
-        _id: ID!
         token: String!
         expiresIn: Int!
     }
@@ -65,14 +64,14 @@ module.exports = buildSchema(`
         receivedby: [messageReceivedBy]!
     }
     input inputChat {
-        chattype: Boolean!
+        chattype: String!
         chatname: String
         chatmembers: [ID!]!
         imageid: String = "Default.png"
     }
 
     type RootQuery {
-        login(phone: String!, password: String!): AuthData!
+        login(email: String!, password: String!): AuthData!
         users: [User!]!
         userById(_id: ID): User
         chats: [Chat!]!

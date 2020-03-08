@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 let userSchema = new mongoose.Schema({
     'firstname': {
@@ -19,6 +20,7 @@ let userSchema = new mongoose.Schema({
     },
     'imageid': {
         'type': String,
+        'required': true,
         'default': 'default.png'
     },
     'friends': [{    
@@ -54,5 +56,11 @@ async function verification(next) {
 
 userSchema.pre('findOne', verification);
 userSchema.pre('findOneAndUpdate', verification);
+
+userSchema.pre('save', function(next) {
+    this.firstname = slugify(this.firstname, { lower: true });
+    this.lastname = slugify(this.lastname, { lower: true });
+    next();
+});
 
 module.exports = mongoose.model('userinfos', userSchema);
