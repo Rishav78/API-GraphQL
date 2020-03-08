@@ -21,6 +21,10 @@ module.exports = {
         const { friendId } = args;
         const { userId } = req;
         try {
+            const friends = await userinfo.findOne({ _id: userId, friends: friendId });
+            if (!friends) {
+                throw new Error('users are not friends')
+            }
             await userinfo.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
             await userinfo.findByIdAndUpdate(friendId, { $pull: { friends: friendId } });
             return { success: true };
