@@ -21,7 +21,7 @@ module.exports = {
             throw err;
         }
     },
-    createMessage: async ( args, req ) => {
+    CreateMessage: async ( args, req ) => {
         const { InputMessage } = args;
         try {
             const msg = new message({...InputMessage});

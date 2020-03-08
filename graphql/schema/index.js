@@ -46,6 +46,11 @@ module.exports = buildSchema(`
         expiresIn: Int!
     }
 
+    type Error {
+        success: Boolean!
+        msg: String
+    }
+
     input inputUser {
         firstname: String!
         lastname: String!
@@ -81,9 +86,11 @@ module.exports = buildSchema(`
     }
 
     type RootMutation {
-        createMessage(InputMessage: inputMessage): Message
-        createUser(InputUser: inputUser): User
-        createChat(InputChat: inputChat): Chat
+        CreateMessage(InputMessage: inputMessage): Message
+        CreateUser(InputUser: inputUser): User
+        CreateChat(InputChat: inputChat): Chat
+        AddFriend(friendId: ID!): Error!
+        RemoveFriend(friendId: ID!): Error!
     }
 
     schema {

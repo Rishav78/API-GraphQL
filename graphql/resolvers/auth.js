@@ -16,7 +16,7 @@ module.exports = {
             throw err;
         }
     },
-    createUser: async ( args, req ) => {
+    CreateUser: async ( args, req ) => {
         const { email, password, ...restInfo } = args.InputUser;
         try {
             await (new users({ email, password })).save();

@@ -25,7 +25,7 @@ module.exports = {
             throw err;
         }
     },
-    createChat: async (args, req) => {
+    CreateChat: async (args, req) => {
         const { InputChat } = args;
         try {
             const newChat = new chat({ ...InputChat, messages: [] });

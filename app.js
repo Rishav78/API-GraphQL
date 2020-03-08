@@ -16,7 +16,7 @@ const corsOptions = require('./lib/cors');
 require('./config/db');
 
 // SocketIO Config
-// require('./socket.io')(httpServer);
+require('./socket.io')(httpServer);
 
 // Middlewears
 app.use(express.json()); //JSON parser
