@@ -3,8 +3,11 @@ const userinfo = require('../../models/usersinfo');
 module.exports = {
     AddFriend: async (args, req) => {
         const { friendId } = args;
-        const { userId } = req;
+        const { isAuth, userId } = req;
         try {
+            if (!isAuth) {
+                throw new Error('unauthrized');
+            }
             const friends = await userinfo.findOne({ _id: userId, friends: friendId });
             if (!!friends) {
                 throw new Error('both users are already friends')
@@ -19,8 +22,11 @@ module.exports = {
     },
     RemoveFriend: async (args, req) => {
         const { friendId } = args;
-        const { userId } = req;
+        const { isAuth, userId } = req;
         try {
+            if (!isAuth) {
+                throw new Error('unauthrized');
+            }
             const friends = await userinfo.findOne({ _id: userId, friends: friendId });
             if (!friends) {
                 throw new Error('users are not friends')

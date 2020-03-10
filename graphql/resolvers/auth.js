@@ -3,7 +3,6 @@ const userinfo = require('../../models/usersinfo');
 
 module.exports = {
     login: async ( args ) => {
-        console.log(args)
         const { email, password } = args;
         try{
             const user = await users.findOne({ email });

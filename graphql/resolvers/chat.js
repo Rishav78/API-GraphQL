@@ -3,7 +3,11 @@ const { users } = require('../helpers');
 
 module.exports = {
     chats: async (args, req) => {
+        const { isAuth } = req;
         try {
+            if (!isAuth) {
+                throw new Error('unauthrized');
+            }
             const chats = await chat.find().populate('messages');
             return chats.map( singleChat => ({
                 ...singleChat._doc, chatmembers: users.bind(this, singleChat.chatmembers)

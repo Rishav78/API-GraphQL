@@ -4,9 +4,9 @@ module.exports = {
     messages: async ( args, req ) => {
         const { isAuth } = req;
         try {
-            // if (!isAuth) {
-            //     throw new Error('unauthrized');
-            // }
+            if (!isAuth) {
+                throw new Error('unauthrized');
+            }
             const messages = await message.find();
             return messages;
         } 
@@ -15,8 +15,12 @@ module.exports = {
         }
     },
     messageById: async ( args, req ) => {
+        const { isAuth } = req;
         const { _id } = args;
         try {
+            if (!isAuth) {
+                throw new Error('unauthrized');
+            }
             const msg = await message.findById(_id);
             return msg;
         }
@@ -25,8 +29,12 @@ module.exports = {
         }
     },
     CreateMessage: async ( args, req ) => {
+        const { isAuth } = req;
         const { InputMessage } = args;
         try {
+            if (!isAuth) {
+                throw new Error('unauthrized');
+            }
             const msg = new message({...InputMessage});
             return (await msg.save());
         }
