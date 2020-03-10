@@ -20,17 +20,14 @@ module.exports = {
     CreateUser: async ( args, req ) => {
         const { email, password, ...restInfo } = args.InputUser;
         try {
-            // await (new users({ email, password })).save();
-            // const newUserInfo = new userinfo({ email, ...restInfo });
-            // const user = await newUserInfo.save();
-            const token = jwt.sign({ email }, process.env.JSON_WEB_TOKEN_EMAIL_VERIFIY, {
+            const { _id } = await (new users({ email, password })).save();
+            const newUserInfo = new userinfo({ email, ...restInfo });
+            const user = await newUserInfo.save();
+            const token = jwt.sign({ email, _id  }, process.env.JSON_WEB_TOKEN_EMAIL_VERIFIY, {
                 expiresIn: '1d'
             });
-            sendMail(email, token)
-            .then(() => {
-                console.log('domw');
-            })
-            // return user;
+            sendMail(email, token);
+            return user;
         }
         catch (err) {
             throw err;

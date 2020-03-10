@@ -2,8 +2,8 @@ const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
-    // secure: false,
-    // port: 25,
+    secure: false,
+    port: 25,
     auth: {
         type: 'login',
         user: process.env.EMAIL,
@@ -14,10 +14,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-console.log(process.env.EMAIL, process.env.PASSWORD)
-
 exports.sendMail = (to, token) => {
-    // console.log(transporter)
     return transporter.sendMail({
         from: process.env.EMAIL,
         to,

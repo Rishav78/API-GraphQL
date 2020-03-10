@@ -11,6 +11,7 @@ const httpServer = require('http').createServer(app);
 const PORT = process.env.PORT;
 const auth = require('./middlewares/is-auth');
 const corsOptions = require('./lib/cors');
+const routes = require('./routes');
 
 // MongoDB Config
 require('./config/db');
@@ -26,6 +27,8 @@ app.use(auth()); // User authentication
 app.use(morgan('tiny')); // display logs
 
 app.use(cors(corsOptions)); // handle cors request
+
+app.use(routes); // handle routes
 
 app.use('/graphql', graphqlHttp({
     schema: require('./graphql/schema'),

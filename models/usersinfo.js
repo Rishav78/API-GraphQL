@@ -45,7 +45,6 @@ let userSchema = new mongoose.Schema({
 
 async function verification(next) {
     const { email } = this;
-    console.log(this);
     const user = this.model('users').findOne({ email });
     if (!user.active) {
         throw new Error('user doest not exist');
