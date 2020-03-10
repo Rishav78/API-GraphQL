@@ -17,6 +17,7 @@ let userSchema = new mongoose.Schema({
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             'please provide a valid email'
         ],
+        unique: true
     },
     'imageid': {
         'type': String,

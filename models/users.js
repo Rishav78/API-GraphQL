@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             'please provide a valid email'
         ],
+        unique: true,
     },
     'password': {
         'type': String,
@@ -52,7 +53,13 @@ userSchema.methods.getLoginToken = async function(email, password) {
     if ( !isEqual ) {
         throw Error('invalid password');
     }
-    const { _id } = await this.model('userinfos').findOne({ email });
+    const { _id, active, verified } = await this.model('userinfos').findOne({ email });
+    if (!active) {
+        throw new Error('this user has been deleted');
+    }
+    if (!verified) {
+        throw new Error('verify the account to login');
+    }
     const token = jwt.sign({ email, _id }, process.env.JSON_WEB_TOKEN_KEY, {
         expiresIn: '1h'
     });
