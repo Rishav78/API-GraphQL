@@ -1,96 +1,60 @@
-
 const { buildSchema  } = require('graphql');
+const { 
+    Auth, 
+    AuthMutations, 
+    AuthQuries } = require('./Auth');
+
+const { 
+    Chat, 
+    ChatMutations, 
+    ChatQuries, 
+    InputChat } = require('./Chat');
+
+const { Error } = require('./Error');
+
+const { 
+    InputMessage, 
+    Message, 
+    MessageMutations, 
+    MessageQuries } = require('./Message');
+
+const { 
+    InputUser, 
+    User, 
+    UserMutations, 
+    UserQuries } = require('./User');
 
 module.exports = buildSchema(`
-    type MessageReceivedBy {
-        _id: ID!
-        seen: Boolean!
-        user: ID!
-    }
 
-    type Message {
-        _id: ID!
-        sender: ID!
-        message: String!
-        receivedby: [MessageReceivedBy!]!
-        createdAt: String!
-        updatedAt: String!
-    }
+    ${Error}
+    
+    ${Auth}
 
-    type Chat {
-        _id: ID!
-        chattype: String!
-        chatname: String
-        chatmembers: [User!]!
-        messages: [Message!]!
-        imageid: String!
-        createdAt: String!
-        updatedAt: String!
-    }
+    ${Chat}
 
-    type User {
-        _id: ID!
-        firstname: String!
-        lastname: String!
-        email: String!
-        password: String
-        friends: [User!]!
-        activeChats: [ID!]!
-        status: Boolean!
-        updatedAt: String!
-        createdAt: String!
-    }
+    ${Message}
 
-    type AuthData {
-        token: String!
-        expiresIn: Int!
-    }
+    ${User}
 
-    type Error {
-        success: Boolean
-        msg: String
-    }
+    ${InputChat}
 
-    input inputUser {
-        firstname: String!
-        lastname: String!
-        email: String!
-        password: String!
-    }
+    ${InputMessage}
 
-    input messageReceivedBy {
-        seen: Boolean!
-        user: ID!
-    }
-
-    input inputMessage {
-        sender: ID!
-        message: String!
-        receivedby: [messageReceivedBy]!
-    }
-    input inputChat {
-        chattype: String!
-        chatname: String
-        chatmembers: [ID!]!
-        imageid: String = "Default.png"
-    }
+    ${InputUser}
+    
 
     type RootQuery {
-        login(email: String!, password: String!): AuthData!
-        users: [User!]!
-        userById(_id: ID): User
-        chats: [Chat!]!
-        chatById(_id: ID!): Chat
-        messages: [Message!]!
-        messageById(_id: ID): Message
+        ${AuthQuries}
+        ${ChatQuries}
+        ${MessageQuries}
+        ${UserQuries}
     }
 
     type RootMutation {
-        CreateMessage(InputMessage: inputMessage): Message
-        CreateUser(InputUser: inputUser): User
-        CreateChat(InputChat: inputChat): Chat
-        AddFriend(friendId: ID!): Error!
-        RemoveFriend(friendId: ID!): Error!
+        ${AuthMutations}
+        ${ChatMutations}
+        ${MessageMutations}
+        ${UserMutations}
     }
 
     schema {
