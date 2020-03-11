@@ -5,6 +5,7 @@ if ( process.env.NODE_ENV !== 'production' ) {
 const express = require('express');
 const graphqlHttp = require('express-graphql');
 const morgan = require('morgan');
+const path = require('path');
 const cors = require('cors');
 const app = express();
 const httpServer = require('http').createServer(app);
@@ -18,6 +19,8 @@ require('./config/db');
 
 // SocketIO Config
 require('./socket.io')(httpServer);
+
+// app.use(express.static(path.join(__dirname, 'static')));
 
 // Middlewears
 app.use(express.json()); //JSON parser

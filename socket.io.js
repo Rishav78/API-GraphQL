@@ -18,8 +18,11 @@ module.exports = server => {
                     if(!decodedToken) {
                         throw new Error('invalid token');
                     }
+                    if(!!connected[decodedToken._id]) {
+                        throw new Error('first logout from another device');
+                    }
                     data._id = decodedToken._id;
-                    return cb(null, { authenticate: true, token });
+                    return cb(null, { authenticate: true, token, _id: decodedToken._id });
                 }
                 catch (err) {
                     console.log(err.message)
@@ -27,6 +30,7 @@ module.exports = server => {
                 }
             }
             const user = await users.findOne({ email });
+            console.log(user)
             if (!user) {
                 return cb({ authenticate: false, message: 'user does not exist' }, null); 
             }
@@ -64,17 +68,20 @@ module.exports = server => {
             });
     
             socket.on('send-message', async (data, cb) => {
-                const message = await controllers.messages.save(data);
+                const {msg} = await controllers.message.save(data, authdata._id);
                 const { receiver, chatId } = data;
                 const send = (i) => {
                     if( i !== receiver.length ) {
-                        const socketid = connected[e._id];
-                        if(socketid) io.to(socketid).emit('new-message', { ...message, chatId})
-                        setTimeout(() => sendMessage(i+1), 5);
+                        const id = receiver[i]._id;
+                        const socketid = connected[id];
+                        if(socketid && id !== authdata._id) {
+                            io.to(socketid).emit('new-message', { ...msg._doc, chatId, receivedby: undefined });
+                        }
+                        setTimeout(() => send(i+1), 5);
                     }
                 }
                 setTimeout(() => send(0), 5);
-                return cb(message);
+                return cb(msg);
             });
 
         },

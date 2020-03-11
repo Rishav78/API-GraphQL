@@ -9,5 +9,5 @@ exports.updateReceiveBy = async (message, userid) => {
 
 exports.save = async (data, userId) => {
     const { chatId, message } = data;
-    return await services.messages.save(chatId, message, userId);
+    return await services.message.save(chatId, message, userId);
 }

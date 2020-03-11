@@ -1,4 +1,5 @@
 const messages = require('../models/messages');
+const chats = require('../models/chats');
 
 exports.updateReceivedBy = async (messageId, userid) => {
     try {
@@ -21,7 +22,7 @@ exports.updateReceivedBy = async (messageId, userid) => {
 
         return { success: true, msg };
     } catch (err) {
-        return { success:  false };
+        return { success:  false, message: err.message };
     }
 }
 
@@ -30,7 +31,7 @@ exports.save = async (chatId, message, sender) => {
     try {
         const newmessage = new messages({ sender, message });
 
-        const msg = (await newmessage.save())
+        const msg = await (await newmessage.save())
             .populate({ path: 'sender', select })
             .execPopulate();
 
@@ -38,6 +39,6 @@ exports.save = async (chatId, message, sender) => {
         return { success: true, msg };
     } 
     catch (err) {
-        return { success: false };
+        return { success: false, err: err.message };
     }
 }

@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 let messageSchema = new mongoose.Schema({
     sender: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
+        ref: 'userinfos',
         required: true
     },
     receivedby: {
         type: [{
             user: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'users',
+                ref: 'userinfos',
             },
             seen: {
                 type: Boolean,
