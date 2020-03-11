@@ -2,8 +2,8 @@ const messages = require('../models/messages');
 const chats = require('../models/chats');
 
 exports.updateReceivedBy = async (messageId, userid) => {
+    const select = { firstname: 1, lastname: 1, imageid: 1 };
     try {
-        const select = { firstname: 1, lastname: 1, imageid: 1 };
         const updatedMessage = await messages.findByIdAndUpdate(messageId, 
         { 
             '$push': {
@@ -13,15 +13,37 @@ exports.updateReceivedBy = async (messageId, userid) => {
             } 
         },
         {
-            new: true, 
-            useFindAndModify: false
+            new: true
         });
         const msg = await updatedMessage.populate('receivedby.user', select)
                         .populate('sender', select)
                         .execPopulate();
 
         return { success: true, msg };
-    } catch (err) {
+    } 
+    catch (err) {
+        return { success:  false, message: err.message };
+    }
+}
+
+exports.updateSeenBy = async (messageId, userId) => {
+    try {
+        const updatedMessage = await messages.findOneAndUpdate({ '_id': messageId, 'receivedby.user': userId}, 
+        { 
+            '$set': {
+                'receivedby.$.seen': true
+            } 
+        },
+        {
+            new: true
+        });
+        const msg = await updatedMessage.populate('receivedby.user', select)
+                        .populate('sender', select)
+                        .execPopulate();
+
+        return { success: true, msg };
+    } 
+    catch (err) {
         return { success:  false, message: err.message };
     }
 }

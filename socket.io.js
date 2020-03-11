@@ -59,12 +59,17 @@ module.exports = server => {
             });
     
             socket.on('message-delivered', async data => {
-                const { success, msg } = await controllers.message.updateReceiveBy(data.message, authdata._id);
-                if(!success) return ;
-                
+                const { msg } = await controllers.message.updateReceiveBy(data);                
                 const { sender } = msg;
                 const socketid = connected[sender._id];
-                io.to(socketid).emit('update-message-information', { success, msg });
+                io.to(socketid).emit('update-message-information', msg);
+            });
+
+            socket.on('message-seen', async data => {
+                const { msg } = await controllers.message.updateSeenBy(data);
+                const { sender } = msg;
+                const socketid = connected[sender._id];
+                io.to(socketid).emit('update-message-information', msg);
             });
     
             socket.on('send-message', async (data, cb) => {
