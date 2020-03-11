@@ -6,16 +6,20 @@ let messageSchema = new mongoose.Schema({
         ref: 'users',
         required: true
     },
-    receivedby: [{
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'users',
-        },
-        seen: {
-            type: Boolean,
-            default: false,
-        }
-    }],
+    receivedby: {
+        type: [{
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'users',
+            },
+            seen: {
+                type: Boolean,
+                default: false,
+            }
+        }],
+        default: [],
+        required: true
+    },
     message: {
         type: String,
         required: true
