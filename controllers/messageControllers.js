@@ -1,3 +1,4 @@
+//@ts-check
 const services = require('../services');
 
 exports.updateReceiveBy = (io, connected) => {
@@ -20,10 +21,11 @@ exports.updateSeenBy = (io, connected) => {
     }
 }
 
-exports.save = (io, connected) => {
+exports.save = (io, authdata, connected) => {
     return async function(data, cb) {
-        const { chatId, message, receiver, chatId  } = data;
-        const msg = await services.message.save(chatId, message, userId);
+        const { chatId, message, receiver  } = data;
+        const { msg, success, err } = await services.message.save(chatId, message, authdata._id);
+        console.log(msg, success, err)
         const send = (i) => {
             if( i !== receiver.length ) {
                 const id = receiver[i]._id;

@@ -24,12 +24,12 @@ module.exports = server => {
 
             socket.on('message-seen', controllers.message.updateSeenBy(io, connected, connected2));
     
-            socket.on('send-message', controllers.message.save(io, connected, connected2));
+            socket.on('send-message', controllers.message.save(io, authdata, connected, connected2));
 
         },
 
         disconnect: controllers.auth.logout(connected, connected2),
-        
+
         timeout: 10000
     });
 }

@@ -48,7 +48,7 @@ userSchema.pre('save', async function(next) {
 });
 
 userSchema.methods.getLoginToken = async function() {
-    const { active, verified } = this;
+    const { active, verified, email } = this;
     const { _id } = await this.model('userinfos').findOne({ email });
     if (!active) {
         throw new Error('this user has been deleted');

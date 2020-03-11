@@ -20,7 +20,7 @@ require('./config/db');
 // SocketIO Config
 require('./socket.io')(httpServer);
 
-// app.use(express.static(path.join(__dirname, 'static')));
+app.use(express.static(path.join(__dirname, 'static')));
 
 // Middlewears
 app.use(express.json()); //JSON parser

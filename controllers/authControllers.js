@@ -1,8 +1,8 @@
 const users = require('../models/users');
-
+const jwt = require('jsonwebtoken');
 
 exports.login = (connected) => {
-    return function(socket, data, cb) {
+    return async function(socket, data, cb) {
         const { email, password, token } = data;
         try {
             if (!!token) {
@@ -27,7 +27,7 @@ exports.login = (connected) => {
             }
         }
         catch (err) {
-            console.log(err.message)
+            console.log(err)
             return cb({ authenticate: false, message: err.message }, null);
         }
     }
