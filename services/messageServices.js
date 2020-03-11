@@ -15,20 +15,21 @@ exports.updateReceivedBy = async (messageId, userid) => {
         {
             new: true
         });
-        const msg = await updatedMessage.populate('receivedby.user', select)
+        const message = await updatedMessage.populate('receivedby.user', select)
                         .populate('sender', select)
                         .execPopulate();
 
-        return { success: true, msg };
+        return { success: true, message };
     } 
     catch (err) {
-        return { success:  false, message: err.message };
+        return { success:  false, err: err.message };
     }
 }
 
 exports.updateSeenBy = async (messageId, userId) => {
+    const select = { firstname: 1, lastname: 1, imageid: 1 };
     try {
-        const updatedMessage = await messages.findOneAndUpdate({ '_id': messageId, 'receivedby.user': userId}, 
+        const updatedMessage = await messages.findOneAndUpdate({ '_id': messageId, 'receivedby': { $elemMatch: { user: userId } }}, 
         { 
             '$set': {
                 'receivedby.$.seen': true
@@ -37,14 +38,13 @@ exports.updateSeenBy = async (messageId, userId) => {
         {
             new: true
         });
-        const msg = await updatedMessage.populate('receivedby.user', select)
+        const message = await updatedMessage.populate('receivedby.user', select)
                         .populate('sender', select)
                         .execPopulate();
-
-        return { success: true, msg };
+        return { success: true, message };
     } 
     catch (err) {
-        return { success:  false, message: err.message };
+        return { success:  false, err: err.message };
     }
 }
 

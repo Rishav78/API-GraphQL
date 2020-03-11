@@ -1,17 +1,17 @@
 
-exports.typing = (io, connected) => {
+exports.typing = (io, authdata, connected) => {
     return async function(data, cb) {
-        const { chat, status, user:sender } = data;
-        const { receiver, _id: chatId } = chat;
+        const { chat, status } = data;
+        const { chatmembers, _id: chatId } = chat;
         const send = function(i) {
-            if ( i!== receiver.length ) {
-                const id = receiver[i]._id
+            if ( i < chatmembers.length ) {
+                const id = chatmembers[i]._id
                 const socketid = connected[id];
-                if( !!socketid ) {
-                    io.to(socketid).emit('user-typing', { chatId, sender, status });
+                if( !!socketid && id !== authdata._id ) {
+                    io.to(socketid).emit('user-typing', { chatId, sender: authdata._id, status });
                 }
+                setTimeout(() => send(i+1), 5);
             }
-            setTimeout(() => send(i+1), 5);
         }
         setTimeout(() => send(0), 5);
     }
