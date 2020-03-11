@@ -12,3 +12,12 @@ exports.AuthQuries = `
 exports.AuthMutations = `
     CreateUser(InputUser: inputUser): User
 `;
+
+exports.InputUser = `
+    input inputUser {
+        firstname: String!
+        lastname: String!
+        email: String!
+        password: String!
+    }
+`

@@ -55,7 +55,7 @@ module.exports = server => {
             });
     
             socket.on('message-delivered', async data => {
-                const { success, msg } = await controllers.message.updateReceiveBy(data, authdata._id);
+                const { success, msg } = await controllers.message.updateReceiveBy(data.message, authdata._id);
                 if(!success) return ;
                 
                 const { sender } = msg;

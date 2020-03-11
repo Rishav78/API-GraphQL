@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const services = require('../services');
+const { sendMail } = require('../config/nodemailer');
 
 exports.verifyUser = async (req, res) => {
     const { id } = req.params;
@@ -19,4 +20,13 @@ exports.verifyUser = async (req, res) => {
     catch (err) {
         return res.json({ success: false, message: err.message });
     }
+}
+
+exports.getVerificationToken = (req, res) => {
+    const { email, _id } = req.body;
+    const token = jwt.sign({ email, _id  }, process.env.JSON_WEB_TOKEN_EMAIL_VERIFIY, {
+        expiresIn: '1d'
+    });
+    sendMail(email, token)
+    return res.json({ success: true });
 }

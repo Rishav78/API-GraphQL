@@ -1,4 +1,5 @@
 const message = require('../../models/messages');
+const user = require('../../models/users');
 const userinfo = require('../../models/usersinfo');
 const { users } = require('../helpers');
 
@@ -9,7 +10,7 @@ module.exports = {
             if (!isAuth) {
                 throw new Error('unauthrized');
             }
-            const Users = await userinfo.find({}, { password: 0 });
+            const Users = await user.find({}, { password: 0 });
             return Users.map( user => ({ ...user._doc, friends: users.bind(this, user.friends )}));
         }
         catch (err) {

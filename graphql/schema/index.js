@@ -1,5 +1,6 @@
 const { buildSchema  } = require('graphql');
 const { 
+    InputUser,
     Auth, 
     AuthMutations, 
     AuthQuries } = require('./Auth');
@@ -19,7 +20,6 @@ const {
     MessageQuries } = require('./Message');
 
 const { 
-    InputUser, 
     User, 
     UserMutations, 
     UserQuries } = require('./User');

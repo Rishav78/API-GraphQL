@@ -1,9 +1,8 @@
 const services = require('../services');
 const auth = require('../auth/is-auth');
 
-exports.updateReceiveBy = async (msg, userid) => {
-    const { msg } = data;
-    const { _id } = msg;
+exports.updateReceiveBy = async (message, userid) => {
+    const { _id } = message;
     const updatedMessage = await services.messages.updateReceivedBy(_id, userid);
     return updatedMessage;
 }
