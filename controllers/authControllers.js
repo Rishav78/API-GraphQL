@@ -1,5 +1,7 @@
+const users = require('../models/users');
 
-exports.auth = (connected, connected2) => {
+
+exports.login = (connected) => {
     return function(socket, data, cb) {
         const { email, password, token } = data;
         try {
@@ -12,8 +14,7 @@ exports.auth = (connected, connected2) => {
                     throw new Error('already logedin in another device');
                 }
                 data._id = decodedToken._id;
-                return cb(null, { authenticate: true, token, _id: decodedToken._id });
-            
+                return cb(null, { token, _id: decodedToken._id });
             }
             else {
                 const user = await users.findOne({ email });
@@ -29,5 +30,15 @@ exports.auth = (connected, connected2) => {
             console.log(err.message)
             return cb({ authenticate: false, message: err.message }, null);
         }
+    }
+}
+
+exports.logout = (connected, connected2) => {
+    return function (socket) {
+        const userId = connected2[socket.id];
+        delete connected2[socket.id];
+        delete connected[userId];
+        socket.broadcast.emit('user-status', { userId, status: false });
+        console.log('disconnected')
     }
 }

@@ -21,6 +21,6 @@ exports.userStatus = (io, connected) => {
     return function(data, cb) {
         const { _id } = data;
         const status = typeof connected[_id] !== 'undefined';
-        cb({status: status});
+        cb({ status });
     }
 }

@@ -6,13 +6,11 @@ const jwt = require('jsonwebtoken');
 module.exports = server => {
     const io = socketIO(server);
 
-    connected = {};
-    connected2 = {}
+    const connected = {}, connected2 = {};
 
     require('socketio-auth')(io, {
-        authenticate: async function(socket, data, cb) {
-            
-        },
+        authenticate: controllers.auth.login(connected, connected2),
+
         postAuthenticate: function(socket, authdata) {
             console.log('connected');
             connected[authdata._id] = socket.id;
@@ -29,13 +27,9 @@ module.exports = server => {
             socket.on('send-message', controllers.message.save(io, connected, connected2));
 
         },
-        disconnect: function(socket) {
-            const userId = connected2[socket.id];
-            delete connected2[socket.id];
-            delete connected[userId];
-            socket.broadcast.emit('user-status', { userId, status: false });
-            console.log('disconnected')
-        },
+
+        disconnect: controllers.auth.logout(connected, connected2),
+        
         timeout: 10000
     });
 }

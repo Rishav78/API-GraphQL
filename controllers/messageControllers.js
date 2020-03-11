@@ -1,5 +1,4 @@
 const services = require('../services');
-const auth = require('../auth/is-auth');
 
 exports.updateReceiveBy = (io, connected) => {
     return async function(data, cb) {
