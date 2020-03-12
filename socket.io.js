@@ -20,11 +20,14 @@ module.exports = server => {
     
             socket.on('typing', controllers.user.typing(io, authdata, connected, connected2));
     
+            socket.on('send-message', controllers.message.save(io, authdata, connected, connected2));
+
             socket.on('message-delivered', controllers.message.updateReceiveBy(io, authdata, connected, connected2));
 
             socket.on('message-seen', controllers.message.updateSeenBy(io, authdata, connected, connected2));
-    
-            socket.on('send-message', controllers.message.save(io, authdata, connected, connected2));
+
+            socket.on('send-file')
+
 
         },
 
