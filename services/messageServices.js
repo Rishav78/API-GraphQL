@@ -48,11 +48,11 @@ exports.updateSeenBy = async (messageId, userId) => {
     }
 }
 
-exports.save = async (chatId, message, sender, messagetype) => {
+exports.save = async (chatId, msg, sender) => {
     const select = { firstname: 1, lastname: 1, imageid: 1 };
+    const { message, messagetype, file } = msg;
     try {
-        const newmessage = new messages({ sender, message: message.message, messagetype: message.messagetype });
-
+        const newmessage = new messages({ sender, message, file, messagetype });
         const msg = await (await newmessage.save())
             .populate({ path: 'sender', select })
             .execPopulate();

@@ -8,9 +8,16 @@ let messageSchema = new mongoose.Schema({
     },
     messagetype: {
         type: String,
-        enum: ['text', 'audio', 'video', 'doc', 'image'],
+        enum: ['text', 'media'],
         required: true,
         default: 'text'
+    },
+    file: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'medias',
+        required: function() {
+            return this.messagetype !== 'text';
+        }
     },
     receivedby: {
         type: [{
@@ -28,7 +35,9 @@ let messageSchema = new mongoose.Schema({
     },
     message: {
         type: String,
-        required: true
+        required: function() {
+            return this.messagetype === 'text';
+        }
     },
 },{
     timestamps: true
