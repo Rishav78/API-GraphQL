@@ -1,8 +1,10 @@
 exports.Message = `
     type Message {
         _id: ID!
-        sender: ID!
-        message: String!
+        sender: User!
+        messagetype: String!
+        message: String
+        file: Media
         receivedby: [MessageReceivedBy!]!
         createdAt: String!
         updatedAt: String!

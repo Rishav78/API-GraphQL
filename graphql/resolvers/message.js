@@ -3,11 +3,16 @@ const message = require('../../models/messages');
 module.exports = {
     messages: async ( args, req ) => {
         const { isAuth } = req;
+        const select = { firstname: 1, lastname: 1, imageid: 1 };
         try {
-            if (!isAuth) {
-                throw new Error('unauthrized');
-            }
-            const messages = await message.find();
+            // if (!isAuth) {
+            //     throw new Error('unauthrized');
+            // }
+            const messages = await message.find()
+                .populate('file')
+                .populate('sender', select)
+                .populate('receivedby', select);
+                
             return messages;
         } 
         catch (err) {

@@ -11,7 +11,8 @@ const {
     ChatQuries, 
     InputChat } = require('./Chat');
 
-const { Error } = require('./Error');
+const { Error: Err } = require('./Error');
+const { Media } = require('./Media');
 
 const { 
     InputMessage, 
@@ -26,13 +27,15 @@ const {
 
 module.exports = buildSchema(`
 
-    ${Error}
+    ${Err}
     
     ${Auth}
 
     ${Chat}
 
     ${Message}
+
+    ${Media}
 
     ${User}
 
