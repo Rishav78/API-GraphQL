@@ -6,6 +6,12 @@ let messageSchema = new mongoose.Schema({
         ref: 'userinfos',
         required: true
     },
+    messagetype: {
+        type: String,
+        enum: ['text', 'audio', 'video', 'doc', 'image'],
+        required: true,
+        default: 'text'
+    },
     receivedby: {
         type: [{
             user: {

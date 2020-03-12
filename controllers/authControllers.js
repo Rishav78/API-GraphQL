@@ -7,6 +7,7 @@ exports.login = (connected) => {
         try {
             if (!!token) {
                 const decodedToken = jwt.verify(token, process.env.JSON_WEB_TOKEN_KEY);
+                console.log(decodedToken)
                 if(!decodedToken) {
                     throw new Error('invalid token');
                 }

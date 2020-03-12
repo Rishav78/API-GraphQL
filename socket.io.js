@@ -26,7 +26,7 @@ module.exports = server => {
 
             socket.on('message-seen', controllers.message.updateSeenBy(io, authdata, connected, connected2));
 
-            socket.on('send-file')
+            socket.on('send-file', controllers.file.sendFile(io, authdata, connected))
 
 
         },
