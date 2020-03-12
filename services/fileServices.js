@@ -44,7 +44,7 @@ exports.save = async ( data ) => {
     if ( !(await exists(storage.filepath)) ) {
         await mkdir(storage.filepath)
     }
-    await writeFile(path.join(storage.filepath, storage.filename + storage.extention), file, 'binary');
+    await writeFile(path.join(storage.filepath, storage.filename + storage.extention), file.file, 'binary');
     return await (
         new media({
         filename,
