@@ -48,7 +48,7 @@ module.exports = {
             }
             const newChat = new chat({...InputChat, chatmembers: [...chatmembers, userId]});
             const newchat = await newChat.save();
-            const { privateKey, publicKey } = await generateKeyPair();
+            const { privateKey, publicKey } = generateKeyPair();
             await writeFile(path.join(__dirname, '..', '..', 'keys', `chat-${newchat._id}-privatekey.pem`), privateKey);
             await writeFile(path.join(__dirname, '..', '..', 'keys', `chat-${newchat._id}-publicKey.pem`), publicKey);
             return {
