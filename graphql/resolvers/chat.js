@@ -1,5 +1,10 @@
 const chat = require('../../models/chats');
+const path = require('path');
+const util = require('util');
+const fs = require('fs');
+const writeFile = util.promisify(fs.writeFile);
 const { users } = require('../helpers');
+const { generateKeyPair } = require('../../lib/generateKeyPair');
 
 module.exports = {
     chats: async (args, req) => {
@@ -43,8 +48,12 @@ module.exports = {
             }
             const newChat = new chat({...InputChat, chatmembers: [...chatmembers, userId]});
             const newchat = await newChat.save();
+            const { privateKey, publicKey } = await generateKeyPair();
+            await writeFile(path.join(__dirname, '..', '..', 'keys', `chat-${newchat._id}-privatekey.pem`), privateKey);
+            await writeFile(path.join(__dirname, '..', '..', 'keys', `chat-${newchat._id}-publicKey.pem`), publicKey);
             return {
-                ...newchat._doc, chatmembers: users.bind(this, newchat.chatmembers)
+                ...newchat._doc, 
+                chatmembers: users.bind(this, newchat.chatmembers)
             };
         }
         catch (err) {
