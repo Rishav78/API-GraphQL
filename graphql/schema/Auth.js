@@ -1,12 +1,18 @@
 exports.Auth = `
     type AuthData {
-        token: String!
-        expiresIn: Int!
+        err: String
+        token: String
+        expiresIn: Int
+    }
+    type CurrentUser {
+        user: User
+        err: String 
     }
 `;
 
 exports.AuthQuries = `
     login(email: String!, password: String!): AuthData!
+    currentUser: CurrentUser
 `;
 
 exports.AuthMutations = `

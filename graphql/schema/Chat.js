@@ -9,6 +9,10 @@ exports.Chat = `
         createdAt: String!
         updatedAt: String!
     }
+    type Chats {
+        chats: [Chat!]
+        err: String
+    }
 `;
 
 exports.InputChat = `
@@ -21,7 +25,7 @@ exports.InputChat = `
 `;
 
 exports.ChatQuries = `
-    chats: [Chat!]!
+    chats: Chats!
     chatById(_id: ID!): Chat
 `
 

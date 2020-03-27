@@ -14,12 +14,14 @@ module.exports = {
                 throw new Error('unauthrized');
             }
             const chats = await chat.find().populate('messages');
-            return chats.map( singleChat => ({
-                ...singleChat._doc, chatmembers: users.bind(this, singleChat.chatmembers)
-            }));
+            return {
+                chats: chats.map( singleChat => ({
+                    ...singleChat._doc, chatmembers: users.bind(this, singleChat.chatmembers)
+                }))
+            };
         }
         catch (err) {
-            throw err;
+            return { err: err.message };
         }
     },
     chatById: async (args, req) => {

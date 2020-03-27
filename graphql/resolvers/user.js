@@ -5,16 +5,20 @@ const { users } = require('../helpers');
 
 module.exports = {
     users: async ( args, req ) => {
+        const select = { firstname: 1, lastname: 1, email: 1, imageid: 1 };
         const { isAuth } = req;
         try {
             if (!isAuth) {
                 throw new Error('unauthrized');
             }
-            const Users = await user.find({}, { password: 0 });
-            return Users.map( user => ({ ...user._doc, friends: users.bind(this, user.friends )}));
+            const friends = await userinfo.findById(req.userId, { friends: 1 });
+            const Users = await userinfo.find({ _id: { $nin: friends }}, select)
+            return {
+                users: Users.map( user => ({ ...user._doc, friends: users.bind(this, user.friends )}))
+            };
         }
         catch (err) {
-            throw err;
+            return { err: err.message };
         }
     },
     userById: async ( args, req ) => {

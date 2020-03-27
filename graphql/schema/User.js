@@ -5,11 +5,15 @@ exports.User = `
         lastname: String!
         email: String!
         password: String
-        friends: [User!]!
-        activeChats: [ID!]!
+        friends: [User!]
+        activeChats: [Chat!]
         status: Boolean!
         updatedAt: String!
         createdAt: String!
+    }
+    type Users {
+        err: String
+        users: [User!] 
     }
 `;
 
@@ -19,6 +23,6 @@ exports.UserMutations = `
 `;
 
 exports.UserQuries = `
-    users: [User!]!
+    users: Users!
     userById(_id: ID): User
 `;

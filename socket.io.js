@@ -33,6 +33,6 @@ module.exports = server => {
 
         disconnect: controllers.auth.logout(connected, connected2),
 
-        timeout: 10000
+        timeout: 1000000
     });
 }
