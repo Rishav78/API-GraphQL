@@ -40,11 +40,15 @@ module.exports = {
         }
     },
     currentUser: async (args, req) => {
+        const select = { firstname: 1, lastname: 1, email: 1, imageid: 1 };
         try {
             if(!req.isAuth) {
                 throw new Error('unauthorized')
             }
-            const user = await userinfo.findById(req.userId);
+            const user = await userinfo.findById(req.userId).populate('friends', select);
+            if(!user) {
+                throw new Error('unauthorized')
+            }
             return { user };
         }
         catch (err) {

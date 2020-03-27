@@ -1,6 +1,6 @@
 exports.Error = `
     type Error {
-        success: Boolean
-        msg: String
+        success: Boolean!
+        err: String
     }
 `;

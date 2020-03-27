@@ -11,8 +11,9 @@ module.exports = {
             if (!isAuth) {
                 throw new Error('unauthrized');
             }
-            const friends = await userinfo.findById(req.userId, { friends: 1 });
-            const Users = await userinfo.find({ _id: { $nin: friends }}, select)
+            const {friends} = await userinfo.findById(req.userId, { friends: 1 });
+
+            const Users = await userinfo.find({ $and: [{_id: { $nin: friends }}, {_id: { $ne: req.userId }}]}, select)
             return {
                 users: Users.map( user => ({ ...user._doc, friends: users.bind(this, user.friends )}))
             };

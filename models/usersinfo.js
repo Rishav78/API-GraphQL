@@ -26,7 +26,7 @@ let userSchema = new mongoose.Schema({
     },
     'friends': [{    
         'type': mongoose.Schema.Types.ObjectId,
-        'ref': 'users',
+        'ref': 'userinfos',
         'default': []
     }],
     'activeChats':  [{
@@ -35,9 +35,9 @@ let userSchema = new mongoose.Schema({
         'default': []
     }],
     'status': {
-        'type': Boolean,
+        'type': String,
         'required': true,
-        'default': false,
+        'default': "Hey There! I'm using LetsChat",
     }
 },{
     'timestamps': true

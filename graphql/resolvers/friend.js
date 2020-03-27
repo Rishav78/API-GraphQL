@@ -17,7 +17,7 @@ module.exports = {
             return { success: true };
         }
         catch (err) {
-            return { success: false, msg: err.message };
+            return { success: false, err: err.message };
         }
     },
     RemoveFriend: async (args, req) => {
@@ -36,7 +36,7 @@ module.exports = {
             return { success: true };
         }
         catch (err) {
-            return { success: false, msg: err.message };
+            return { success: false, err: err.message };
         }
     }
 }

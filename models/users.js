@@ -57,7 +57,7 @@ userSchema.methods.getLoginToken = async function() {
         throw new Error('verify the account to login');
     }
     const token = jwt.sign({ email, _id }, process.env.JSON_WEB_TOKEN_KEY, {
-        expiresIn: `${process.env.AUTH_TOKEN_EXPIRESIN}h`
+        // expiresIn: `${process.env.AUTH_TOKEN_EXPIRESIN}h`
     });
     return { token, expiresIn: process.env.AUTH_TOKEN_EXPIRESIN, _id };
 }
