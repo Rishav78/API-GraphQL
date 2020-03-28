@@ -5,7 +5,7 @@ exports.Chat = `
         chatname: String
         chatmembers: [User!]!
         messages: [Message!]!
-        imageid: String!
+        imageid: String
         createdAt: String!
         updatedAt: String!
     }
@@ -17,21 +17,19 @@ exports.Chat = `
 
 exports.InputChat = `
     input inputPersonalChat {
-        chatname: String
         chatmember: ID!
-        imageid: String = "personal.png"
     }
     input inputGroupChat {
-        chatname: String
+        chatname: String!
         chatmembers: [ID!]!
-        imageid: String = "group.png"
+        imageid: String
     }
 `;
 
 exports.ChatQuries = `
     chats: Chats!
     chat(_id: ID!): Chat
-`
+`;
 
 exports.ChatMutations = `
     CreatePersonalChat(InputChat: inputPersonalChat): Chat
