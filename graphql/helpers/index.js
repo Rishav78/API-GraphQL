@@ -5,6 +5,12 @@ const users = async ids => {
     return usrs.map( usr => ({ ...usr._doc, friends: users.bind(this, usr.friends )}));
 }
 
+const asyncIterator = (items, cb, i=0) => {
+    cb(items[i]);
+    setTimeout(() => asyncIterator(items, cb, i+1), 5);
+}
+
 module.exports = {
-    users
+    users,
+    asyncIterator
 };

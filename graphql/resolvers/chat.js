@@ -1,10 +1,11 @@
 const chat = require('../../models/chats');
-const path = require('path');
-const util = require('util');
-const fs = require('fs');
-const writeFile = util.promisify(fs.writeFile);
-const { users } = require('../helpers');
-const { generateKeyPair } = require('../../lib/generateKeyPair');
+const userInfo = require('../../models/usersinfo');
+const { users, asyncIterator } = require('../helpers');
+
+const findByUserId = async _id => {
+    
+    return cht; 
+}
 
 module.exports = {
     chats: async (args, req) => {
@@ -24,15 +25,16 @@ module.exports = {
             return { err: err.message };
         }
     },
-    chatById: async (args, req) => {
+    chat: async (args, req) => {
+        const select = { firstname: 1, lastname: 1, email: 1, imageid: 1 };
         const { isAuth } = req;
-        const { _id } = args;
+        const { _id  } = args;
         try {
             if(!isAuth) {
                 throw new Error('not authenticated')
             }
-            const chats = await chat.findById(_id).populate('messages');
-            return chats.map( singleChat => ({
+            const cht = await chat.findById(_id).populate('messages').populate('chatmembers', select);
+            return cht.map( singleChat => ({
                 ...singleChat._doc, chatmembers: users.bind(this, singleChat.chatmembers)
             }));
         }
@@ -40,19 +42,31 @@ module.exports = {
             throw err;
         }
     },
-    CreateChat: async (args, req) => {
+    CreatePersonalChat: async (args, req) => {
         const { userId, isAuth } = req;
         const { InputChat } = args;
-        const { chatmembers } = InputChat;
         try {
             if(!isAuth) {
                 throw new Error('not authenticated')
             }
-            const newChat = new chat({...InputChat, chatmembers: [...chatmembers, userId]});
-            const newchat = await newChat.save();
-            const { privateKey, publicKey } = generateKeyPair();
-            await writeFile(path.join(__dirname, '..', '..', 'keys', `chat-${newchat._id}-privatekey.pem`), privateKey);
-            await writeFile(path.join(__dirname, '..', '..', 'keys', `chat-${newchat._id}-publicKey.pem`), publicKey);
+            const chatmembers = [ InputChat.chatmember, userId];
+            const chatExists = await chat.findOne({ 
+                $and:[{ 
+                    chatmembers: { 
+                        $all: chatmembers
+                    } 
+                },
+                {
+                    chattype: 'personal' 
+                }]
+            });
+            if(!!chatExists) {
+                throw new Error('chat exists');
+            }
+            const newchat = (new chat({
+                ...InputChat, chatmembers 
+            })).save();
+            await userInfo.updateMany({ _id: { $in: chatmembers } });
             return {
                 ...newchat._doc, 
                 chatmembers: users.bind(this, newchat.chatmembers)

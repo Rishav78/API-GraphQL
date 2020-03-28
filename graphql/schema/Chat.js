@@ -16,19 +16,24 @@ exports.Chat = `
 `;
 
 exports.InputChat = `
-    input inputChat {
-        chattype: String!
+    input inputPersonalChat {
+        chatname: String
+        chatmember: ID!
+        imageid: String = "personal.png"
+    }
+    input inputGroupChat {
         chatname: String
         chatmembers: [ID!]!
-        imageid: String = "Default.png"
+        imageid: String = "group.png"
     }
 `;
 
 exports.ChatQuries = `
     chats: Chats!
-    chatById(_id: ID!): Chat
+    chat(_id: ID!): Chat
 `
 
 exports.ChatMutations = `
-    CreateChat(InputChat: inputChat): Chat
+    CreatePersonalChat(InputChat: inputPersonalChat): Chat
+    CreateGroupChat(InputChat: inputGroupChat): Chat
 `;
