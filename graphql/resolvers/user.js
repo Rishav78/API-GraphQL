@@ -22,15 +22,15 @@ module.exports = {
             return { err: err.message };
         }
     },
-    userById: async ( args, req ) => {
+    user: async ( args, req ) => {
         const { isAuth } = req;
         const { _id } = args;
         try {
             if (!isAuth) {
                 throw new Error('unauthrized');
             }
-            const usr = await user.findById(_id,  { password: 0 });
-            return {...usr._doc, friends: users.bind(this, usr.friends)};
+            const usr = await userinfo.findById(_id,  { firstname: 1, lastname: 1, email: 1, imageid: 1 });
+            return usr;
         }
         catch (err) {
             throw err;

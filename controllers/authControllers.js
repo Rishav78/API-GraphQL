@@ -30,12 +30,12 @@ exports.logout = (connected, connected2) => {
     return function (socket) {
         const userId = connected2[socket.id];
         if(!userId) {
-            console.log('user not loged in');
+            console.log('user not loged in ', socket.id);
             return;
         }
         delete connected2[socket.id];
         delete connected[userId];
         socket.broadcast.emit('user-status', { userId, status: false });
-        console.log('disconnected')
+        console.log('disconnected ', socket.id)
     }
 }

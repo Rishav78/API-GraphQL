@@ -58,9 +58,9 @@ exports.save = async (chatId, msg, sender) => {
             .execPopulate();
 
         await chats.findByIdAndUpdate(chatId, { '$push': { 'messages': msg._id } });
-        return { success: true, msg };
+        return  msg;
     } 
     catch (err) {
-        return { success: false, err: err.message };
+        throw err;
     }
 }

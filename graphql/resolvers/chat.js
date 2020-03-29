@@ -57,9 +57,9 @@ module.exports = {
         }
     },
     CreatePersonalChat: async (args, req) => {
+        const select = { firstname: 1, lastname: 1, email: 1, imageid: 1 };
         const { userId, isAuth } = req;
         const { InputChat } = args;
-        console.log(args);
         try {
             if(!isAuth) {
                 throw new Error('not authenticated')
@@ -69,9 +69,9 @@ module.exports = {
             if(!!exists) {
                 throw new Error('chat exists');
             }
-            const newchat = await (new chat({
+            const newchat = (await (new chat({
                 chatmembers, chattype: 'personal'
-            })).save();
+            })).save()).populate('chatmembers', select);
             await userInfo.updateMany({ _id: { $in: chatmembers } }, { $push: { activeChats: newchat._id } });
             return {
                 ...newchat._doc, 

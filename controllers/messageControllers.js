@@ -1,6 +1,5 @@
 //@ts-check
 const services = require('../services');
-const helper = require('./helperControllers');
 
 exports.updateReceiveBy = (io, authdata, connected) => {
     return async function(data, cb) {
@@ -33,11 +32,24 @@ exports.updateSeenBy = (io, authdata, connected) => {
 }
 
 exports.save = (io, authdata, connected) => {
+
+    const asyncIterator = (items, cb, i=0) => {
+        if(i<items.length){
+            cb(items[i]);
+            setTimeout(() => asyncIterator(items, cb, i+1), 5);
+        }
+    }
+
     return async function(data, cb) {
         try {
             const { chat, message } = data;
-            const { msg, success, err } = await services.message.save(chat._id, message, authdata._id);
-            setTimeout(() => helper.sendMessage(0, { chat, message: {...msg._doc} }, authdata, connected, io), 5);
+            console.log(chat.receiver);
+            const msg = await services.message.save(chat._id, message, authdata._id);
+            asyncIterator(chat.receiver, (item) => {
+                const id = connected[item._id];
+                if(!id) return;
+                io.to(id).emit('new-message', { message: msg, chatid: chat._id });
+            })
             return cb(msg);
         }
         catch (err) {

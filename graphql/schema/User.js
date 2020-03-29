@@ -24,5 +24,5 @@ exports.UserMutations = `
 
 exports.UserQuries = `
     users: Users!
-    userById(_id: ID): User
+    user(_id: ID): User
 `;

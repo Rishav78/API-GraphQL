@@ -1,7 +1,5 @@
 const socketIO = require('socket.io');
 const controllers = require('./controllers');
-const users = require('./models/users');
-const jwt = require('jsonwebtoken');
 
 module.exports = server => {
     const io = socketIO(server);
@@ -33,6 +31,6 @@ module.exports = server => {
 
         disconnect: controllers.auth.logout(connected, connected2),
 
-        timeout: 1000000
+        timeout: 100000
     });
 }
