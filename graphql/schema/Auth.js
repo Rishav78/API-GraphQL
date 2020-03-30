@@ -11,10 +11,14 @@ exports.Auth = `
 `;
 
 exports.AuthQuries = `
+    
     currentUser: CurrentUser
 `;
 
 exports.AuthMutations = `
     login(phone: String!): Error!
-    verifyUser(otp: String!): AuthData
+    verifyUser(otp: String!, phone: String!): AuthData!
 `;
+
+exports.InputUser = `
+`

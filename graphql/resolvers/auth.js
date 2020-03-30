@@ -1,49 +1,47 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const users = require('../../models/users');
 const userinfo = require('../../models/usersinfo');
-const { sendMail } = require('../../config/nodemailer');
+const OTP = require('../../models/otp');
 
 module.exports = {
     login: async (args) => {
         const { phone } = args;
         try {
             const user = await users.findOne({ phone });
-            if (user) {
+            if(user) {
                 if(user.logedin) {
                     throw new Error('user already logedin in another device');
                 }
-                return;
+                await OTP.deleteOne({ phone });
             }
-            (new users({ phone })).save();
+            else {
+                await (new users({ phone })).save();
+            }
+            const code =  Math.floor(100000 + Math.random() * 900000).toString();
+            // sendMessage(phone)
+            await (new OTP({ phone, otp: code })).save();
+            return { success: true }
         }
         catch (err) {
-            return { err: err.message }
+            return { success: false, err: err.message }
         }
     },
-    // CreateUser: async (args, req) => {
-    //     const { email, password, ...restInfo } = args.InputUser;
-    //     try {
-    //         const { _id } = await (new users({ email, password })).save();
-    //         const newUserInfo = new userinfo({ email, ...restInfo });
-    //         const user = await newUserInfo.save();
-    //         const token = jwt.sign({ email, _id }, process.env.JSON_WEB_TOKEN_EMAIL_VERIFIY, {
-    //             expiresIn: `${process.env.EMAIL_VERIFIY_TOKEN_EXPIREIN}h`
-    //         });
-    //         sendMail(email, token);
-    //         return user;
-    //     }
-    //     catch (err) {
-    //         throw err;
-    //     }
-    // },
     verifyUser: async (args, req) => {
-        const { otp } = args;
+        const { otp, phone } = args;
         try {
-
+            const data = await OTP.findOne({ phone })
+            if(!data) {
+                throw new Error('some error occured');
+            }
+            if(data.otp !== otp) {
+                throw new Error('invalid OTP');
+            }
+            OTP.deleteOne({ phone });
+            const user = await users.findOneAndUpdate({ phone }, { verified: true, active: true, 'logedin': true }, { new: true });
+            const token = await user.getLoginToken();
+            return { success: true, ...token };
         }
         catch (err) {
-            throw err;
+            return { success: false, err: err.message };
         }
     },
     currentUser: async (args, req) => {

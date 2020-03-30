@@ -7,11 +7,15 @@ const userSchema = new mongoose.Schema({
         'type': String,
         'required': true,
         'unique': true,
+        match: [
+            /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im,
+            'invalid phone no'
+        ]
     },
     'verified': {
         'type': Boolean,
         'required': true,
-        'default': true
+        'default': false
     },
     'active': {
         'type': Boolean,
@@ -35,11 +39,7 @@ const userSchema = new mongoose.Schema({
 // });
 
 userSchema.methods.getLoginToken = async function() {
-    const { active, verified, phone, logedin, _id:id } = this;
-    const { _id } = await this.model('userinfos').findOne({ email });
-    if(logedin) {
-        throw new Error(' already logedin in another device');
-    }
+    const { active, verified, phone, _id } = this;
     if (!active) {
         throw new Error('this user has been deleted');
     }
@@ -49,7 +49,6 @@ userSchema.methods.getLoginToken = async function() {
     const token = jwt.sign({ phone, _id }, process.env.JSON_WEB_TOKEN_KEY, {
         // expiresIn: `${process.env.AUTH_TOKEN_EXPIRESIN}h`
     });
-    this.model('users').findByIdAndUpdate(id, { $set: { logedin: true } });
     return { token, expiresIn: process.env.AUTH_TOKEN_EXPIRESIN, _id };
 }
 
