@@ -23,6 +23,5 @@ exports.UserMutations = `
 `;
 
 exports.UserQuries = `
-    users: Users!
-    user(_id: ID): User
+    user(phone: String!): Error!
 `;

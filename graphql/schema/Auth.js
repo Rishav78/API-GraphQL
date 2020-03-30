@@ -11,19 +11,10 @@ exports.Auth = `
 `;
 
 exports.AuthQuries = `
-    login(email: String!, password: String!): AuthData!
     currentUser: CurrentUser
 `;
 
 exports.AuthMutations = `
-    CreateUser(InputUser: inputUser): User
+    login(phone: String!): Error!
+    verifyUser(otp: String!): AuthData
 `;
-
-exports.InputUser = `
-    input inputUser {
-        firstname: String!
-        lastname: String!
-        email: String!
-        password: String!
-    }
-`
