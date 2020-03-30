@@ -51,7 +51,7 @@ module.exports = {
             }
             const user = await userinfo.findOne({ phone: req.userId });
             if(!user) {
-                throw new Error('unauthorized')
+                throw new Error('user not found');
             }
             return { user };
         }

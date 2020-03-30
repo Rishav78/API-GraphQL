@@ -11,8 +11,7 @@ exports.Auth = `
 `;
 
 exports.AuthQuries = `
-    
-    currentUser: CurrentUser
+    currentUser: CurrentUser!
 `;
 
 exports.AuthMutations = `

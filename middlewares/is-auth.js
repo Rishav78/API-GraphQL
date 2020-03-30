@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 module.exports = () => {
     return function(req, res, next) {
         const authHeader = req.get('Authorization');
-
         if (!authHeader) {
             req.isAuth = false;
             return next();
@@ -20,10 +19,11 @@ module.exports = () => {
                 return next();
             }
             req.isAuth = true;
-            req.userId = decodedToken._id;
+            req.userId = decodedToken.phone;
             return next();
         }
         catch (err) {
+            console.log(err);
             req.isAuth = false;
             return next();
         }

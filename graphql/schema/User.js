@@ -18,8 +18,8 @@ exports.User = `
 `;
 
 exports.UserMutations = `
-    AddFriend(friendId: ID!): Error!
-    RemoveFriend(friendId: ID!): Error!
+    insertUser(name: String!, image: String): Error!
+    updateUser(name: String, image: String): Error!
 `;
 
 exports.UserQuries = `

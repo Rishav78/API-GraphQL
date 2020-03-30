@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     },
     'status': {
         'type': String,
+        'required': true,
         'default': "Hey There! I'm using LetsChat"
     },
 })

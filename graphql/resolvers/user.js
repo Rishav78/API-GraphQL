@@ -36,4 +36,24 @@ module.exports = {
             throw err;
         }
     },
+    insertUser: async (args, req) => {
+        const { name, image } = args;
+        console.log(args);
+        try {
+            await (new userinfo({ name, phone: req.userId })).save();
+            return { success: true };
+        }
+        catch (err) {
+            return { success: false, err: err.message };
+        }
+    },
+    updateUser: async (args, req) => {
+        try {
+            await userinfo.updateOne({ phone: req.userId }, args);
+            return { success: true };
+        }
+        catch (err) {
+            return { success: false, err: err.message };
+        }
+    }
 }
