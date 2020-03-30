@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const OTPSchema = new mongoose.Schema({
-  phone: {
+  number: {
     type: String,
     requiredPaths: true,
     unique: true

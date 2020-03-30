@@ -1,46 +1,38 @@
-const message = require('../../models/messages');
-const user = require('../../models/users');
+const { parsePhoneNumberFromString } = require('libphonenumber-js');
+const users = require('../../models/users');
 const userinfo = require('../../models/usersinfo');
-const { users } = require('../helpers');
 
 module.exports = {
-    users: async ( args, req ) => {
-        const select = { firstname: 1, lastname: 1, email: 1, imageid: 1 };
+    user: async ( args, req ) => { 
         const { isAuth } = req;
         try {
             if (!isAuth) {
                 throw new Error('unauthrized');
             }
-            const {friends} = await userinfo.findById(req.userId, { friends: 1 });
+            const parser = parsePhoneNumberFromString(args.phone);
+            if(!parser) {
+                throw new Error('invalid number');
+            }
+            const { countryCallingCode: number } = parser;
+            const user = await users.findOne({ number });
+            if(!user || !user.verified || !user.active) {
+                throw new Error('user does not exist');
+            }
 
-            const Users = await userinfo.find({ $and: [{_id: { $nin: friends }}, {_id: { $ne: req.userId }}]}, select)
-            return {
-                users: Users.map( user => ({ ...user._doc, friends: users.bind(this, user.friends )}))
-            };
+            return user;
         }
         catch (err) {
             return { err: err.message };
         }
     },
-    user: async ( args, req ) => {
-        const { isAuth } = req;
-        const { _id } = args;
-        try {
-            if (!isAuth) {
-                throw new Error('unauthrized');
-            }
-            const usr = await userinfo.findById(_id,  { firstname: 1, lastname: 1, email: 1, imageid: 1 });
-            return usr;
-        }
-        catch (err) {
-            throw err;
-        }
-    },
     insertUser: async (args, req) => {
         const { name, image } = args;
-        console.log(args);
         try {
-            await (new userinfo({ name, phone: req.userId })).save();
+            if(!req.isAuth) {
+                throw new Error('unauthorized')
+            }
+            const { number, countrycode } = req.userId;
+            await (new userinfo({ name, number, countrycode })).save();
             return { success: true };
         }
         catch (err) {
@@ -49,7 +41,11 @@ module.exports = {
     },
     updateUser: async (args, req) => {
         try {
-            await userinfo.updateOne({ phone: req.userId }, args);
+            if(!req.isAuth) {
+                throw new Error('unauthorized')
+            }
+            const { number, countrycode } = req.userId;
+            await userinfo.updateOne({ number }, args);
             return { success: true };
         }
         catch (err) {

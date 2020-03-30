@@ -11,11 +11,12 @@ exports.Auth = `
 `;
 
 exports.AuthQuries = `
-    currentUser: CurrentUser!
+    currentUser: User!
 `;
 
 exports.AuthMutations = `
     login(phone: String!): Error!
+    logout: Error!
     verifyUser(otp: String!, phone: String!): AuthData!
 `;
 

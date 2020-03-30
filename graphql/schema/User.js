@@ -1,15 +1,10 @@
 exports.User = `
     type User {
-        _id: ID!
-        firstname: String!
-        lastname: String!
-        email: String!
-        password: String
-        friends: [User!]
-        activeChats: [Chat!]
-        status: Boolean!
-        updatedAt: String!
-        createdAt: String!
+        number: String
+        countrycode: String
+        name: String
+        status: String
+        err: String
     }
     type Users {
         err: String
@@ -23,5 +18,5 @@ exports.UserMutations = `
 `;
 
 exports.UserQuries = `
-    user(phone: String!): Error!
+    user(phone: String!): User!
 `;

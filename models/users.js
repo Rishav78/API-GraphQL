@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
-    'phone': {
+    'number': {
         'type': String,
         'required': true,
         'unique': true,
-        match: [
+        'match': [
             /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im,
             'invalid phone no'
         ]
+    },
+    'countrycode': {
+        'type': String,
+        'required': true
     },
     'verified': {
         'type': Boolean,
@@ -39,14 +42,17 @@ const userSchema = new mongoose.Schema({
 // });
 
 userSchema.methods.getLoginToken = async function() {
-    const { active, verified, phone, _id } = this;
+    const { active, verified, number, countrycode, _id } = this;
     if (!active) {
         throw new Error('this user has been deleted');
     }
     if (!verified) {
         throw new Error('verify the account to login');
     }
-    const token = jwt.sign({ phone, _id }, process.env.JSON_WEB_TOKEN_KEY, {
+    const token = jwt.sign({ 
+        number : {
+            number, countrycode
+        }, _id }, process.env.JSON_WEB_TOKEN_KEY, {
         // expiresIn: `${process.env.AUTH_TOKEN_EXPIRESIN}h`
     });
     return { token, expiresIn: process.env.AUTH_TOKEN_EXPIRESIN, _id };

@@ -2,10 +2,14 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 
 const userSchema = new mongoose.Schema({
-    'phone': {
-        type: String,
-        required: true,
-        unique: true
+    'number': {
+        'type': String,
+        'required': true,
+        'unique': true
+    },
+    'countrycode' : {
+        'type': String,
+        'required': true,
     },
     'name': {
         'type': String,

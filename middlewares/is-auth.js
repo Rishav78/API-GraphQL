@@ -19,7 +19,7 @@ module.exports = () => {
                 return next();
             }
             req.isAuth = true;
-            req.userId = decodedToken.phone;
+            req.userId = decodedToken.number;
             return next();
         }
         catch (err) {
