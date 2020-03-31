@@ -6,20 +6,16 @@ module.exports = {
     user: async ( args, req ) => { 
         const { isAuth } = req;
         try {
-            if (!isAuth) {
-                throw new Error('unauthrized');
-            }
+            // if (!isAuth) {
+            //     throw new Error('unauthrized');
+            // }
             const parser = parsePhoneNumberFromString(args.phone);
-            if(!parser) {
-                throw new Error('invalid number');
-            }
-            const { countryCallingCode: number } = parser;
-            const user = await users.findOne({ number });
-            if(!user || !user.verified || !user.active) {
+            const number = parser ? parser.nationalNumber : args.phone;
+            const info = await userinfo.findOne({ number });
+            if(!info) {
                 throw new Error('user does not exist');
             }
-
-            return user;
+            return info;
         }
         catch (err) {
             return { err: err.message };

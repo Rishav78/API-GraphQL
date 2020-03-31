@@ -9,14 +9,15 @@ exports.login = (connected) => {
                 throw new Error('unauthenticated');
             }
             const decodedToken = jwt.verify(token, process.env.JSON_WEB_TOKEN_KEY);
+            const { number, countrycode } = decodedToken.number;
+            const key = `+${countrycode}${number}`;
             if (!decodedToken) {
                 throw new Error('invalid token');
             }
-            if (!!connected[decodedToken._id]) {
+            if (!!connected[key]) {
                 throw new Error('already logedin in another device');
             }
-            console.log(decodedToken);
-            data._id = decodedToken._id;
+            data.number = { number, countrycode };
             return cb(null, { token, _id: decodedToken._id });
         }
         catch (err) {

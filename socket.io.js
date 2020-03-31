@@ -4,21 +4,28 @@ const controllers = require('./controllers');
 module.exports = server => {
     const io = socketIO(server);
 
-    const connected = {}, connected2 = {};
+    const connected = {}, connected2 = {}, data={};
 
     require('socketio-auth')(io, {
         authenticate: controllers.auth.login(connected, connected2),
 
         postAuthenticate: function(socket, authdata) {
-            console.log('connected');
-            connected[authdata._id] = socket.id;
-            connected2[socket.id] = authdata._id;
+            const { countrycode, number } = authdata.number;
+            const key = `+${countrycode}${number}`;
+            connected[key] = socket.id;
+            connected2[socket.id] = key;
 
-            socket.on('user-status', controllers.user.userStatus(io, connected));
+            if(data[key]) {
+                console.log(data[key]);
+            }
+
+            console.log('connected', key);
+
+            // socket.on('user-status', controllers.user.userStatus(io, connected));
     
             socket.on('typing', controllers.user.typing(io, authdata, connected, connected2));
     
-            socket.on('send-message', controllers.message.save(io, authdata, connected, connected2));
+            socket.on('send-message', controllers.message.send(io, authdata, connected, data, connected2));
 
             socket.on('message-delivered', controllers.message.updateReceiveBy(io, authdata, connected, connected2));
 
@@ -31,6 +38,6 @@ module.exports = server => {
 
         disconnect: controllers.auth.logout(connected, connected2),
 
-        timeout: 100000
+        timeout: 1000000
     });
 }

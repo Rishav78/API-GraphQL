@@ -16,7 +16,7 @@ module.exports = {
                 if(user.logedin) {
                     throw new Error('user already logedin in another device');
                 }
-                await OTP.deleteOne({ number });
+                await OTP.remove({ number });
             }
             else {
                 await (new users({ 
@@ -39,16 +39,17 @@ module.exports = {
                 throw new Error('unauthorized')
             }
             const { number } = req.userId;
-            await users.updateOne({ number }, { logedin: false });
+            await users.updateOne({ number }, { logedin: false, verified:false });
             return { success: true };
         }
         catch (err) {
-            return { err: err.message };
+            return { success: false,  err: err.message };
         }
     },
     verifyUser: async (args, req) => {
         const { otp, phone } = args;
         try {
+            console.log(args);
             const { number,
                     nationalNumber } = parsePhoneNumberFromString(phone);
                     
@@ -59,7 +60,8 @@ module.exports = {
             if(data.otp !== otp) {
                 throw new Error('invalid OTP');
             }
-            OTP.deleteOne({ number });
+            console.log(number);
+            await OTP.findOneAndDelete({ number });
             const user = await users.findOneAndUpdate(
                 { number: nationalNumber }, 
                 { verified: true, active: true, 'logedin': true }, 
@@ -82,6 +84,7 @@ module.exports = {
             if(!user) {
                 throw new Error('user not found');
             }
+            // console.log(user);
             return user;
         }
         catch (err) {

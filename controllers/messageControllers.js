@@ -31,7 +31,7 @@ exports.updateSeenBy = (io, authdata, connected) => {
     }
 }
 
-exports.save = (io, authdata, connected) => {
+exports.send = (io, authdata, connected, data) => {
 
     const asyncIterator = (items, cb, i=0) => {
         if(i<items.length){
@@ -40,20 +40,27 @@ exports.save = (io, authdata, connected) => {
         }
     }
 
-    return async function(data, cb) {
+    return async function(info, cb) {
         try {
-            const { chat, message } = data;
-            console.log(chat.receiver);
-            const msg = await services.message.save(chat._id, message, authdata._id);
+            const { chat, message } = info;
+            console.log(info);
             asyncIterator(chat.receiver, (item) => {
-                const id = connected[item._id];
-                if(!id) return;
-                io.to(id).emit('new-message', { message: msg, chatid: chat._id });
-            })
-            return cb(msg);
+                const id = connected[item];
+                if(!id) {
+                    if(!data[item]) {
+                        data[item] = {};
+                    }
+                    if(!data[item].messages) {
+                        data[item].messages = [];
+                    }
+                    return data[item].messages.push(info);
+                }
+                io.to(id).emit('new-message', { message, chat });
+            });
+            return cb({ err: null });
         }
         catch (err) {
-            
+            return cb({ err: err.message });
         }
     }
 }
