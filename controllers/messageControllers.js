@@ -3,7 +3,7 @@ const services = require('../services');
 
 const AsyncIterator = (items, cb, i = 0) => {
   if (i < items.length) {
-    setTimeout(() => cb(item[i], i), 5);
+    setTimeout(() => cb(items[i], i), 5);
     setTimeout(() => AsyncIterator(items, cb, i + 1), 5);
   }
 }
@@ -42,6 +42,7 @@ exports.sendMessage = (io, connected) => {
   return function (data, cb) {
     setTimeout(() =>
       AsyncIterator(data.chat.members, (item, i) => {
+        console.log(item);
         const memberKey = `+${item.countrycode}${item.number}`;
         if (!connected[memberKey]) return;
         io.to(connected[memberKey]).emit('new-message', data);

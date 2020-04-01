@@ -27,9 +27,7 @@ module.exports = server => {
 
             socket.on('create-new-group', controllers.chat.createGroup(io, connected));
 
-            socket.on('send-message-to-group-chat', controllers.message.sendMessage(io, connected));
-    
-            socket.on('send-message-to-personal-chat', controllers.message.send(io, authdata, connected, data, connected2));
+            socket.on('send-message', controllers.message.sendMessage(io, connected));
 
             socket.on('message-delivered', controllers.message.updateReceiveBy(io, authdata, connected, connected2));
 
