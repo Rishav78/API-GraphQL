@@ -1,43 +1,60 @@
 const socketIO = require('socket.io');
+const { validToken } = require('./auth/is-auth');
 const controllers = require('./controllers');
 
 module.exports = server => {
-    const io = socketIO(server);
+    const io = socketIO(server, {
+        transports: ['websocket', 'polling']
+    });
 
-    const connected = {}, connected2 = {}, data={};
+    io.use(function (socket, next) {
+        if (!socket.handshake.query || !socket.handshake.query.token) {
+            console.log('err');
+            return next(new Error('unauthenticated'));
+        }
+        const { authenticated, user } = validToken(socket.handshake.query.token);
+        if (!authenticated) {
+            console.log('err');
+            return next(new Error('unauthenticated'));
+        }
+        socket.user = user;
+        next();
+    });
 
-    require('socketio-auth')(io, {
-        authenticate: controllers.auth.login(connected, connected2),
+    const connected = {}, connected2 = {}, data = {};
 
-        postAuthenticate: function(socket, authdata) {
-            const { countrycode, number } = authdata.number;
-            const key = `+${countrycode}${number}`;
-            connected[key] = socket.id;
-            connected2[socket.id] = key;
+    io.on('connection', function(socket) {
 
-            if(data[key]) {
-                console.log(data[key]);
-            }
+        const { countrycode, number } = socket.user.number;
+        const key = `+${countrycode}${number}`;
+        connected[key] = socket.id;
+        connected2[socket.id] = key;
 
-            console.log('connected', key);
+        if (data[key]) {
+            console.log(data[key]);
+        }
 
-            // socket.on('user-status', controllers.user.userStatus(io, connected));
-    
-            socket.on('typing', controllers.user.typing(io, authdata, connected, connected2));
+        socket.broadcast.emit('user-online', { id: key, status: true });
 
-            socket.on('create-new-group', controllers.chat.createGroup(io, connected));
+        console.log('connected', key, socket.id);
 
-            socket.on('send-message', controllers.message.sendMessage(io, connected));
+        socket.on('user-status', controllers.user.userStatus(io, connected));
 
-            socket.on('message-delivered', controllers.message.updateReceiveBy(io, authdata, connected, connected2));
+        // socket.on('typing', controllers.user.typing(io, authdata, connected, connected2));
 
-            socket.on('message-seen', controllers.message.updateSeenBy(io, authdata, connected, connected2));
+        socket.on('create-new-group', controllers.chat.createGroup(io, connected));
 
-            socket.on('send-file', controllers.file.sendFile(io, authdata, connected))
-        },
+        // socket.on('send-message-to-group', controllers.message.sendMessageToGroup(io, connected));
 
-        disconnect: controllers.auth.logout(connected, connected2),
+        socket.on('send-message', controllers.message.sendMessage(io, connected));
 
-        timeout: 1000
+        // socket.on('message-delivered', controllers.message.updateReceiveBy(io, authdata, connected, connected2));
+
+        // socket.on('message-seen', controllers.message.updateSeenBy(io, authdata, connected, connected2));
+
+        // socket.on('send-file', controllers.file.sendFile(io, authdata, connected))
+
+        socket.on('disconnect', controllers.auth.logout(connected, connected2, socket));
+
     });
 }

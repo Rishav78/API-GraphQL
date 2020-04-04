@@ -19,8 +19,8 @@ exports.typing = (io, authdata, connected) => {
 
 exports.userStatus = (io, connected) => {
     return function(data, cb) {
-        const { _id } = data;
-        const status = typeof connected[_id] !== 'undefined';
+        const { id } = data;
+        const status = typeof connected[id] !== 'undefined';
         cb({ status });
     }
 }

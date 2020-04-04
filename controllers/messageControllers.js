@@ -38,15 +38,32 @@ exports.updateSeenBy = (io, authdata, connected) => {
   }
 }
 
+// exports.sendMessage = (io, connected) => {
+//   return function (data, cb) {
+//     const memberKey = `+${data.chat.member.countrycode}${data.chat.member.countrycode}`;
+//     if (!connected[memberKey]) return;
+//     io.to(connected[memberKey]).emit('new-message', data);
+//     cb(null, data);
+//   }
+// }
+
 exports.sendMessage = (io, connected) => {
-  return function (data, cb) {
-    setTimeout(() =>
-      AsyncIterator(data.chat.members, (item, i) => {
-        console.log(item);
-        const memberKey = `+${item.countrycode}${item.number}`;
-        if (!connected[memberKey]) return;
-        io.to(connected[memberKey]).emit('new-message', data);
-      }));
+  return function(data, cb) {
+    AsyncIterator(data.chat.members, (item, i) => {
+      const { chat, message } = data;
+      const memberKey = `+${item.countrycode}${item.number}`;
+      console.log(connected[memberKey], data);
+      console.log(chat.members);
+      if (!connected[memberKey]) return;
+      io.to(connected[memberKey]).emit('new-message', { 
+        chat, 
+        message: { 
+          ...message, 
+          message: message.message[i]
+        } 
+      });
+    });
+    cb(null, data);
   }
 }
 
