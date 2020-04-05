@@ -38,22 +38,11 @@ exports.updateSeenBy = (io, authdata, connected) => {
   }
 }
 
-// exports.sendMessage = (io, connected) => {
-//   return function (data, cb) {
-//     const memberKey = `+${data.chat.member.countrycode}${data.chat.member.countrycode}`;
-//     if (!connected[memberKey]) return;
-//     io.to(connected[memberKey]).emit('new-message', data);
-//     cb(null, data);
-//   }
-// }
-
 exports.sendMessage = (io, connected) => {
   return function(data, cb) {
-    AsyncIterator(data.chat.members, (item, i) => {
-      const { chat, message } = data;
+    const { chat, message } = data;
+    AsyncIterator(chat.members, (item, i) => {
       const memberKey = `+${item.countrycode}${item.number}`;
-      console.log(connected[memberKey], data);
-      console.log(chat.members);
       if (!connected[memberKey]) return;
       io.to(connected[memberKey]).emit('new-message', { 
         chat, 
@@ -64,6 +53,17 @@ exports.sendMessage = (io, connected) => {
       });
     });
     cb(null, data);
+  }
+}
+
+exports.deleteMessage = (io, connected) => {
+  return function(data, cb) {
+    AsyncIterator(data.chat.members, item => {
+      const memberKey = `+${item.countrycode}${item.number}`;
+      if (!connected[memberKey]) return;
+      io.to(connected[memberKey]).emit('delete-messages', data);
+    })
+    if(cb) cb(null, data);
   }
 }
 

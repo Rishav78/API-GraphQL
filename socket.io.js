@@ -27,6 +27,13 @@ module.exports = server => {
 
         const { countrycode, number } = socket.user.number;
         const key = `+${countrycode}${number}`;
+
+        if(connected[key]) {
+            socket.emit('unauthenticated', { err: 'already logedin'});
+            console.log('already logedin')
+            return socket.disconnect();
+        }
+
         connected[key] = socket.id;
         connected2[socket.id] = key;
 
@@ -39,6 +46,8 @@ module.exports = server => {
         console.log('connected', key, socket.id);
 
         socket.on('user-status', controllers.user.userStatus(io, connected));
+
+        socket.on('delete-messages', controllers.message.deleteMessage(io, connected));
 
         // socket.on('typing', controllers.user.typing(io, authdata, connected, connected2));
 
