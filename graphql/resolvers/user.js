@@ -26,13 +26,13 @@ module.exports = {
         }
     },
     insertUser: async (args, req) => {
-        const { name, image } = args;
+        const { name, image, publickey } = args;
         try {
             if(!req.isAuth) {
                 throw new Error('unauthorized')
             }
             const { number, countrycode } = req.userId;
-            await (new userinfo({ name, number, countrycode })).save();
+            await (new userinfo({ name, number, countrycode, publickey })).save();
             return { success: true };
         }
         catch (err) {
@@ -40,12 +40,13 @@ module.exports = {
         }
     },
     updateUser: async (args, req) => {
+        const { publickey, ...rest } = args;
         try {
             if(!req.isAuth) {
                 throw new Error('unauthorized')
             }
             const { number, countrycode } = req.userId;
-            await userinfo.updateOne({ number }, args);
+            await userinfo.updateOne({ number }, { ...rest, publickey});
             return { success: true };
         }
         catch (err) {

@@ -8,14 +8,14 @@ const AsyncIterator = (items, cb, i = 0) => {
   }
 }
 
-exports.updateReceiveBy = (io, authdata, connected) => {
+exports.notifyMessageReceived = (io, connected, socket) => {
   return async function (data, cb) {
     try {
-      const { messageId } = data;
-      const { message, success } = await services.message.updateReceivedBy(messageId, authdata._id);
-      const { sender } = message;
-      const socketid = connected[sender._id];
-      return io.to(socketid).emit('update-message-information', message);
+      const sender = `+${data.message.sender.countrycode}${data.message.sender.number}`;
+      data.user = socket.user.id;
+      if(!connected[sender]) return;
+      io.to(connected[sender]).emit('message-delivered', data);
+      if(cb) cb(null, data);
     }
     catch (err) {
 

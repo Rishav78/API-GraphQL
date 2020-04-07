@@ -20,6 +20,14 @@ const userSchema = new mongoose.Schema({
         'required': true,
         'default': "Hey There! I'm using LetsChat"
     },
+    'image': {
+        'type': String,
+    },
+    'publickey': {
+        'type': String,
+        'unique': true,
+        'required': true
+    }
 })
 
 // let userSchema = new mongoose.Schema({

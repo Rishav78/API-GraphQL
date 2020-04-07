@@ -41,7 +41,7 @@ module.exports = server => {
             console.log(data[key]);
         }
 
-        socket.broadcast.emit('user-online', { id: key, status: true });
+        socket.broadcast.emit('user-status', { id: key, status: true });
 
         console.log('connected', key, socket.id);
 
@@ -53,11 +53,9 @@ module.exports = server => {
 
         socket.on('create-new-group', controllers.chat.createGroup(io, connected));
 
-        // socket.on('send-message-to-group', controllers.message.sendMessageToGroup(io, connected));
-
         socket.on('send-message', controllers.message.sendMessage(io, connected));
 
-        // socket.on('message-delivered', controllers.message.updateReceiveBy(io, authdata, connected, connected2));
+        socket.on('message-received', controllers.message.notifyMessageReceived(io, connected, socket));
 
         // socket.on('message-seen', controllers.message.updateSeenBy(io, authdata, connected, connected2));
 

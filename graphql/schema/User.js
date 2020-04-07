@@ -5,6 +5,7 @@ exports.User = `
         name: String
         status: String
         err: String
+        publickey: String
     }
     type Users {
         err: String
@@ -13,8 +14,8 @@ exports.User = `
 `;
 
 exports.UserMutations = `
-    insertUser(name: String!, image: String): Error!
-    updateUser(name: String, image: String): Error!
+    insertUser(name: String!, image: String, publickey: String!): Error!
+    updateUser(name: String, image: String, publickey: String!): Error!
 `;
 
 exports.UserQuries = `
